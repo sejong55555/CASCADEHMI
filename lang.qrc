@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/res/Lang">
+        <file>res/CascadeHMI_ko_KR.ts</file>
+    </qresource>
+</RCC>
