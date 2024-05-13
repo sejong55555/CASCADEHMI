@@ -35,11 +35,17 @@ Rectangle {
 
     MouseArea{anchors.fill:parent;onClicked: {root.visible=false}}
 
+    function listviewSizeFit(){
+        moldbackground.height=scrollviewmodel.count*37+46
+        listcontents.height=scrollviewmodel.count*37
+    }
+
     Rectangle{
         id:moldbackground
         x:140;y:21
         width:200
-        height:scrollviewmodel.count*37+46
+        // height:scrollviewmodel.count*37+46
+        height:231
         anchors.centerIn: parent
         color:"#FFFFFF"
         Column{
@@ -70,7 +76,7 @@ Rectangle {
             ListView{
                 id: listcontents
                 width: parent.width
-                height: scrollviewmodel.count*37
+                height: 231-46
                 opacity: 1
                 clip: true
                 model: scrollviewmodel

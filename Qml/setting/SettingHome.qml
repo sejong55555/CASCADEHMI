@@ -12,14 +12,14 @@ Rectangle{
 
     Column{
         TitleBar{
-            left_1st_Text:"Settings"
+            left_1st_Text:qsTr("Settings")
             onSigLClickTitleBar: {
                 Variables.content="Home"
             }
         }
         Column{
             Repeater{
-                model:["General Setting","SVC Contents","Installer Settings"]
+                model:[qsTr("General Setting"),qsTr("SVC Contents"),qsTr("Installer Settings")]
                 List{
                     left_1st_Text: modelData
                     onSigClick: {

@@ -22,21 +22,27 @@ Rectangle{
     property string endMonth: ""
     property string endDate: ""
 
+    property string idString: ""
+    property string nameString: ""
+
+
     property string timeText:hourText===""?"":hourText+":"+minText+" "+ampmText
     property string repeatText
-    property string runnigmodeText:"Cool"
+    property string runnigmodeText:qsTr("Cool")
     property string temperatureText:"18"
 
     property string tempDegree: " ̊"
 
-    signal sigDoneClickAdd()
+    property alias dayOfWeek: repeatOption._dayOfWeek
+
+    signal sigDoneClickAdd(var data)
     signal sigBackClickAdd()
 
     Column{
         anchors.fill:parent
         TitleBar{
             id:titleBar
-            left_1st_Text:"Add Schedule"
+            left_1st_Text:qsTr("Add Schedule")
             onSigLClickTitleBar: {
                 sigBackClickAdd()
             }
@@ -49,8 +55,8 @@ Rectangle{
             model:themodel
             delegate:List{
                 id:listdelegate
-                left_1st_Text:qsTr(listtitle)
-                rightItemtextField:index===0?timeText:index===1?qsTr(repeatText):qsTr(runnigmodeText)
+                left_1st_Text:listtitle
+                rightItemtextField:index===0?timeText:index===1?repeatText:runnigmodeText
                 state:"B"
                 rightTextBoxClip:false
 
@@ -107,13 +113,37 @@ Rectangle{
         }
     }
 
+
     TitleBarButton{
         id:doneButton
         width:56;height:30
         x:414;y:11
         imagename:"done"
         onSigClick: {
-            sigDoneClickAdd()
+            // 추가할 스케쥴 데이터 생성 후 시그널 전달.
+            console.log("sun : " + dayOfWeek["sun"]);
+            var scheduleData = {
+               "isUse": true,
+               "time": timeText,
+               "id": idString,
+               "name": nameString,
+               "day": [ dayOfWeek["mon"] ? "MON" : ""
+                        , dayOfWeek["tue"] ? "TUE" : ""
+                        , dayOfWeek["wen"] ? "WEN" : ""
+                        , dayOfWeek["the"] ? "THE" : ""
+                        , dayOfWeek["fri"] ? "FRI" : ""
+                        , dayOfWeek["sat"] ? "SAT" : ""
+                        , dayOfWeek["sun"] ? "SUN" : ""
+                      ],
+                "isEveryWeek": repeatOption.isEveryWeek,
+                "isPeriod": repeatOption.isPeriod,
+                "startDate": repeatOption.startDateString,
+                "endDate": repeatOption.endDateString,
+                "operation": runnigmodeText,
+                "temperature": temperatureText
+            };
+
+            sigDoneClickAdd(scheduleData);
             //schedulemodel에 data추가? engine에만? engine에도 보내서 db저장 끝
         }
     }
@@ -125,7 +155,7 @@ Rectangle{
         visible:false
         MouseArea{anchors.fill:parent;}
         PopupPicker{
-            textfieldText:"Time"
+            textfieldText:qsTr("Time")
             anchors.centerIn: parent
             midline:false
             state:"triple"
@@ -178,13 +208,15 @@ Rectangle{
 
             repeatText=getRepeatText(repeatOption._dayOfWeek)
 
-            startYear=_startDateList["year"]
-            startMonth=_startDateList["month"]
-            startDate=_startDateList["date"]
 
-            endYear=_endDateList["year"]
-            endMonth=_endDateList["month"]
-            endDate=_endDateList["date"]
+
+            startYear=_startYearString
+            startMonth=_startMonthString
+            startDate=_startDate
+
+            endYear=_endYearString
+            endMonth=_endMonthString
+            endDate=_endDate
         }
     }
 
@@ -199,7 +231,7 @@ Rectangle{
             if(runnigmodeText===""||temperatureText===""){
                 tempDegree=""
                 if(runnigmodeText===""&&temperatureText===""){
-                    runnigmodeText="Off"
+                    runnigmodeText=qsTr("Off")
                 }
             }
 
@@ -218,14 +250,14 @@ Rectangle{
     }
     ListModel{
         id:themodel
-        ListElement{listtitle:"Time";}
-        ListElement{listtitle:"Repeat Schedule";}
-        ListElement{listtitle:"Operation Settings";}
+        ListElement{listtitle:qsTr("Time");}
+        ListElement{listtitle:qsTr("Repeat Schedule");}
+        ListElement{listtitle:qsTr("Operation Settings");}
     }
 
     Component.onCompleted: {
         initaddSchedule()
-        repeatText="Everyday"
+        repeatText=qsTr("Everyday")
     }
 
     function initaddSchedule(){
@@ -233,7 +265,7 @@ Rectangle{
         minText=""
         ampmText=""
 
-        repeatText="Everyday"
+        repeatText=qsTr("Everyday")
 
         startYear=""
         startMonth=""
@@ -243,7 +275,7 @@ Rectangle{
         endMonth=""
         endDate=""
 
-        runnigmodeText="Cool"
+        runnigmodeText=qsTr("Cool")
         temperatureText="18"
         tempDegree=" ̊"
 

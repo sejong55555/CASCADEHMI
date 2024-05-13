@@ -8,6 +8,33 @@ Rectangle {
     anchors.fill: parent
     //color: "skyblue"
 
+
+    Connections {
+        target: appModel
+
+        function onSigScheduleChanged(action) {
+            console.log("Recv signal schedul change!!!!");
+        }
+
+        function onSigGetCircuitTemp(result) {
+            console.log("Recv signal get circuit temp result="+result);
+        }
+
+        function onSigSetEcoMode() {
+            console.log("Set Eco Mode !!!!");
+        }
+
+        function onSigGetMonitorInData(result) {
+            console.log("Recv signal get Get MonitorInData result="+result);
+        }
+
+        function onSigGetMonitorOutData(result) {
+            console.log("Recv signal get Get MonitorOutData result="+result);
+        }
+
+    }
+
+
     function setDate()
     {
         var value =appModel.ddc_setDate("2024-03-27")
@@ -174,6 +201,79 @@ Rectangle {
             console.log("Success ! getActive Alarms")
         else
             console.log("Fail ! getActive Alarms")
+    }
+
+
+    function getCiruitTemp(mode)
+    {
+        var varData =appModel.getCircuitTemp(mode)
+
+        console.log("current Temp = "+varData["currentTemp"])
+        console.log("resolved Temp = "+varData["resolvedTemp"])
+    }
+
+    function setECOMode(val)
+    {
+        appModel.setEcoMode(val)
+    }
+
+    function getMonitorInData()
+    {
+        var resultData = appModel.getMonitorInData()
+        for(var i =0;i<resultData.length; i++){
+            console.log("index ="+i +" ,strInsideTemp ="+resultData[i]["strInsideTemp"]+
+                                     " ,strResolveTemp ="+resultData[i]["strResolveTemp"]+
+                                     " ,strOutsideTemp ="+resultData[i]["strOutsideTemp"]+
+                                     " ,strInWaterTemp ="+resultData[i]["strInWaterTemp"]+
+                                     " ,strOutWaterTemp ="+resultData[i]["strOutWaterTemp"])
+
+            for(var j=0;j<resultData[i]["listCircuitStates"].length;j++){
+                console.log("listCircuitStates ="+ resultData[i]["listCircuitStates"])
+            }
+
+            for(var j=0;j<resultData[i]["listTankTemps"].length;j++){
+                console.log("listTankTemps ="+ resultData[i]["listTankTemps"])
+            }
+        }
+    }
+
+    function getMonitorOutData()
+    {
+        var resultData = appModel.getMonitorOutData()
+
+        //    var varData = { "count"             : 4,
+        //                    "listTitle"         : ["heater", "DWH", "heater", "DWH"],
+        //                    "listInlet"         : [10, 20, 30, 40],
+        //                    "listOutlet"        : [10, 20, 30, 40],
+        //                    "listFlowrate"      : [10, 20, 30, 40],
+        //                    "listWaterpress"    : [10, 20, 30, 40]
+        //    }
+
+        for(var i =0;i<resultData.length; i++){
+            console.log("index ="+i +" ,count ="+resultData[i]["count"])
+
+            for(var j=0;j<resultData[i]["listTitle"].length;j++){
+                console.log("listTitle ="+ resultData[i]["listTitle"])
+            }
+
+            for(var j=0;j<resultData[i]["listInlet"].length;j++){
+                console.log("listInlet ="+ resultData[i]["listInlet"])
+            }
+
+            for(var j=0;j<resultData[i]["listOutlet"].length;j++){
+                console.log("listOutlet ="+ resultData[i]["listOutlet"])
+            }
+
+            for(var j=0;j<resultData[i]["listFlowrate"].length;j++){
+                console.log("listFlowrate ="+ resultData[i]["listFlowrate"])
+            }
+
+            for(var j=0;j<resultData[i]["listWaterpress"].length;j++){
+                console.log("listWaterpress ="+ resultData[i]["listWaterpress"])
+            }
+
+        }
+
     }
 
 
@@ -398,6 +498,62 @@ Rectangle {
                    }
                 }
             }
+        }
+
+        Rectangle {
+           id: three
+           width: parent.width/4
+           height: parent.height
+           x:one.width+5+two.width+5
+           y:100
+           radius: 10
+           color: "transparent"
+           border.color: "lightgray"
+
+           Column
+           {
+               spacing: 5
+
+               Button {
+                   width: three.width
+                   height: 40
+                   text: "get temp, cool"
+                   font.pixelSize: 15
+                   onClicked: {
+                       getCiruitTemp("cool")
+                   }
+               }
+
+               Button {
+                   width: three.width
+                   height: 40
+                   text: "setEcoMode"
+                   font.pixelSize: 15
+                   onClicked: {
+                       setECOMode("true")
+                   }
+               }
+
+               Button {
+                   width: three.width
+                   height: 40
+                   text: "monIn"
+                   font.pixelSize: 15
+                   onClicked: {
+                       getMonitorInData()
+                   }
+               }
+
+               Button {
+                   width: three.width
+                   height: 40
+                   text: "monOut"
+                   font.pixelSize: 15
+                   onClicked: {
+                       getMonitorOutData()
+                   }
+               }
+           }
         }
     }
     /////////////////////// Engine Interface Test

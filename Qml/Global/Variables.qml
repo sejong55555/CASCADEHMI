@@ -25,6 +25,11 @@ QtObject {
     readonly property int hotwatermin:  60
     readonly property int hotwatermax:  30
 
+    readonly property int coolingWatermin:  10
+    readonly property int coolingWatermax:  30
+
+    readonly property int heatingWatermin:  30
+    readonly property int heatingWatermax:  60
 
     property int defaultCoolTemp:20
     property int defaultHeatTemp:25
@@ -83,10 +88,12 @@ QtObject {
 
     property string country: "New York"
 
-
     property int screensaverTime:15
     property bool lcdIdle: false
     property bool autoReturnMainScreen: false
+
+    property string password: "1234"
+
 
     function changeLocale(){
     }
@@ -98,6 +105,13 @@ QtObject {
             inputString = padString + inputString;
         }
         return inputString
+    }
+
+    function modelrangeSet(_min,_max,_model){
+        _model.clear()
+        for(var i=_min; i<_max;i++){
+            _model.append({listName:i});
+        }
     }
 
     function opacityInit(_model,_opacityValue){

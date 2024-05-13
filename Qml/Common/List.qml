@@ -311,4 +311,8 @@ Rectangle {
     function toggleDim(dimflag){
         componentLoader.item.imagestate=dimflag
     }
+
+    function toggleRowInit(index){
+        componentLoader.item._sigToggleRowInit(index)
+    }
 }

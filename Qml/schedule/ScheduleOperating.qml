@@ -223,9 +223,9 @@ Rectangle {
 
     Component.onCompleted: {
         runningmodescroll.scrollviewmodel=runningmodel
-        modelrangeSet(Variables.coolmin,Variables.coolmax,coolmodel)
-        modelrangeSet(Variables.heatmin,Variables.heatmax,heatmodel)
-        modelrangeSet(Variables.automin,Variables.automax,hotmodel)
+        Variables.modelrangeSet(Variables.coolmin,Variables.coolmax,coolmodel)
+        Variables.modelrangeSet(Variables.heatmin,Variables.heatmax,heatmodel)
+        Variables.modelrangeSet(Variables.automin,Variables.automax,hotmodel)
     }
 
     function sethotwaterOper(_temp){
@@ -246,10 +246,6 @@ Rectangle {
         opacityInit(themodel,1)
     }
 
-    function modelrangeSet(_min,_max,_model){
-        for(var i=_min; i<_max;i++){
-            _model.append({listName:i});
-        }
-    }
+
 }
 

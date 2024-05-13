@@ -59,6 +59,14 @@ public:
     bool setSchedule(const QVariantMap &schedule);
     bool deleteSchedule(QString scheduleIdText);
 
+    QVariantMap getCircuitTemp(QString runmode);
+    void setEcoMode(QString onOff);
+    QVariantList getMonitorInData();
+    QVariantList getMonitorOutData();
+
+private:
+    QString getValue(QString pointID);
+
 private:
     QList<ControlPointValue*> m_controlPointValues;
     QList<AlarmInfo*> m_alarmInfo;

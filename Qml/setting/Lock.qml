@@ -16,7 +16,7 @@ Rectangle {
     Column{
         TitleBar{
             id:title
-            left_1st_Text: "Lock"
+            left_1st_Text: qsTr("Lock")
             onSigLClickTitleBar: {
                 sigReadSettingDefault()
                 root.visible=false
@@ -24,7 +24,7 @@ Rectangle {
         }
         List{
             id:alllock
-            left_1st_Text: "All Lock"
+            left_1st_Text: qsTr("All Lock")
             state:"C"
             imagename:"on"
             Component.onCompleted: {
@@ -59,20 +59,43 @@ Rectangle {
                     onImagestateChanged:{
                         toggleDim(imagestate)
                     }
-                    onImagenameChanged: {
-                        var toggleTemp=imagename==="on"?true:false
-                        titleToggleInit(toggleTemp)
+                    // onImagenameChanged: {
+                    //     var toggleTemp=imagename==="on"?true:false
+                    //     titleToggleInit(toggleTemp)
+                    // }
+
+                    Component.onCompleted: {
+                        sigReadLockSetting()
+                        switch(index){
+                        case 0 : {
+                            console.log(onOffLock)
+                            titleToggleInit(onOffLock);
+                            break;
+                        }
+                        case 1 : {
+                            titleToggleInit(modeLock);
+                            break;
+                        }
+                        case 2 : {
+                            titleToggleInit(dhwLock);
+                            break;
+                        }
+                        }
                     }
-                    onSigtoggleOn: {//각 lock mode토글시 inf에 신호를 보내고variable변경 함수 호출+onSigReadLockSetting())
+                    onSigtoggleOn: {
+                        //각 lock mode토글시 inf에 변경 신호 보내기
                         switch(index){
                         case 0:{
+                            onOffLock=true//flag는 inf에서 읽어와서 사용할 것이라서 나중에 지우기
                             console.log("on")
                             break;
                         }
                         case 1:{
+                            modeLock=true
                             break;
                         }
                         case 2:{
+                            dhwLock=true
                             break;
                         }
                         }
@@ -81,12 +104,15 @@ Rectangle {
                         switch(index){
                         case 0:{
                             console.log("off")
+                            onOffLock=true
                             break;
                         }
                         case 1:{
+                            modeLock=true
                             break;
                         }
                         case 2:{
+                            dhwLock=true
                             break;
                         }
                         }
@@ -95,26 +121,31 @@ Rectangle {
         }
     }
 
-    Component.onCompleted: {
+    property bool onOffLock: true
+    property bool modeLock: true
+    property bool dhwLock: false
 
-        var tempText=Variables.onOffLock===true?"on":"off"
-        listmodel.get(0).Imagename=Variables.onOffLock===true?"on":"off"
-        listmodel.get(1).Imagename=Variables.modeLock===true?"on":"off"
-        listmodel.get(2).Imagename=Variables.dhwLock===true?"on":"off"
+    Component.onCompleted: {
+        //todo lock 모드 읽어와서 설정
+        sigReadLockSetting()
+        // var tempText = Variables.onOffLock===true?"on":"off"
+        // listmodel.get(0).Imagename = onOffLock===true? "on":"off"
+        // listmodel.get(1).Imagename = modeLock===true? "on":"off"
+        // listmodel.get(2).Imagename = dhwLock===true? "on":"off"
     }
 
     onSigReadLockSetting: {
-        listmodel.get(0).Imagename=Variables.onOffLock===true?"on":"off"
-        listmodel.get(1).Imagename=Variables.modeLock===true?"on":"off"
-        listmodel.get(2).Imagename=Variables.dhwLock===true?"on":"off"
+        listmodel.get(0).Imagename = onOffLock===true? "on":"off"
+        listmodel.get(1).Imagename = modeLock===true? "on":"off"
+        listmodel.get(2).Imagename = dhwLock===true? "on":"off"
         //lock 상태 읽어와서 Imagestate에 넣어야함
     }
 
     ListModel{
         id:listmodel
-        ListElement{listName:"ON/OFF Lock";Textopacity:1;Imagestate:"n";Imagename:"done"}
-        ListElement{listName:"Mode Lock";Textopacity:1;Imagestate:"n";Imagename:"done"}
-        ListElement{listName:"DHW Lock";Textopacity:1;Imagestate:"n";Imagename:"done"}
+        ListElement{listName:qsTr("ON/OFF Lock");Textopacity:1;Imagestate:"n";Imagename:"done"}
+        ListElement{listName:qsTr("Mode Lock");Textopacity:1;Imagestate:"n";Imagename:"done"}
+        ListElement{listName:qsTr("DHW Lock");Textopacity:1;Imagestate:"n";Imagename:"done"}
     }
 
 

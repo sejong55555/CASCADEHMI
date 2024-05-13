@@ -36,6 +36,7 @@ Rectangle{
             left_1st_Text:titleName
             state:titleState
             onSigRClickTitleBar: {
+                console.log("ini")
                 sigrightItemClick()
             }
             onSigLClickTitleBar: {

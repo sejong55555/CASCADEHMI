@@ -14,7 +14,7 @@ Rectangle {
     Column{
         TitleBar{
             id:title
-            left_1st_Text: "Temperature Unit Setting"
+            left_1st_Text: qsTr("Temperature Unit Setting")
             onSigLClickTitleBar: {
                 sigReadSettingDefault()
                 root.visible=false
@@ -29,6 +29,7 @@ Rectangle {
                     left_1st_Text:model.listName
                     rightItemtextField:model.subText
                     state:model.statename
+                    textOpacity:model.Textopacity
                     onSigClick: {
                         switch(index){
                         case 0:{
@@ -37,15 +38,36 @@ Rectangle {
                         }
                         }
                     }
-
             }
         }
     }
 
+    property bool isCelsius: true
+    property string unitTempSuffix
+    property string unitTempText
+    property real minimumUnitC:0.5
+    property real minimumUnitF:1
+
     onSigReadTempSetting: {
 
-        listmodel.get(0).subText=Variables.tempUnit
-        listmodel.get(1).subText=Variables.tempUnit==="Celsius"?Variables.minimumUnit+" "+suffix+"C":Variables.minimumUnit+" "+suffix+"F"
+        if(isCelsius){
+            unitTempSuffix="°C"
+            unitTempText="Celsius"
+            listmodel.get(1).subText=minimumUnitC+" "+unitTempSuffix
+            listmodel.get(1).Textopacity = 1
+        }
+        else if(!isCelsius) {
+            unitTempSuffix="°F"
+            unitTempText="Fahrenheit"
+
+            listmodel.get(1).subText=minimumUnitF+" "+unitTempSuffix
+            listmodel.get(1).Textopacity = 0.3
+        }
+        listmodel.get(0).subText=unitTempText
+    }
+
+    Component.onCompleted: {
+        sigReadTempSetting()
     }
 
     PopupList{
@@ -56,16 +78,21 @@ Rectangle {
         shadowV:0
         shadowH:4
         onSigClickDelegate: {
-            listmodel.get(0).subText= scrollviewmodel.get(sendData).listName
-            console.log("Selected Temperature Unit : "+scrollviewmodel.get(sendData).listName)
-            Variables.tempUnit=scrollviewmodel.get(sendData).listName
+            //inf로 setting 값 변경 신호 보내야함
+            if(sendData==0){
+                isCelsius=true
+            }
+            else if(sendData==1){
+                isCelsius=false
+            }
+            unitTempText = scrollviewmodel.get(sendData).listName//나중에 삭제
             sigReadTempSetting()
         }
 
         Component.onCompleted: {
-            console.log(tempUnitPopup.selectedDelegateColor)
+            // console.log(""+tempUnitPopup.selectedDelegateColor)
             for(var i=0; i < tempUnitPopup.scrollviewmodel.count; i++){
-                if(tempUnitPopup.scrollviewmodel.get(i).listName===Variables.tempUnit){
+                if(tempUnitPopup.scrollviewmodel.get(i).listName===unitTempText){
                     tempUnitPopup.sigSelectedDelegate(i)
                 }
             }
@@ -74,8 +101,8 @@ Rectangle {
 
     ListModel{
         id:listmodel
-        ListElement{listName:"Celsius/Fahrenheit";statename:"B";subText:""}
-        ListElement{listName:"Minimum Unit";statename:"B";subText:""}
+        ListElement{listName:"Celsius/Fahrenheit";statename:"B";subText:"";Textopacity:1}
+        ListElement{listName:"Minimum Unit";statename:"B";subText:"";Textopacity:1}
     }
 
 }

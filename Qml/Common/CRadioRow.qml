@@ -28,6 +28,8 @@ Rectangle{
     signal _siginitchecked()
     signal _sigleftToggleInit()
 
+    signal _sigToggleRowInit(int index)
+
    Row{
        id:toggleRow
        spacing:20
@@ -98,11 +100,22 @@ Rectangle{
     }
 
     on_Siginitchecked: {
-        radiobtn.checked=true
-        radiobtn2.checked=false
+        radiobtn.checked = true
+        radiobtn2.checked = false
     }
 
     on_SigleftToggleInit:{
         radiobtn.checked=false
+    }
+
+    on_SigToggleRowInit:{
+        if(index===0){
+            radiobtn.checked=true
+            radiobtn2.checked=false
+        }
+        else if(index===1){
+            radiobtn.checked=false
+            radiobtn2.checked=true
+        }
     }
 }

@@ -44,10 +44,12 @@ Rectangle {
                 InputPanel {
                     id: virtualKeyboard
                     visible: false
-                    width: parent.width
-                    height: parent.height * 0.4
-                    y: parent.height - height
+                    width: Variables.sourceWidth
+                    height: Variables.sourceHeight* 0.4
+                    x:100
+                    y: Variables.sourceHeight - height
                 }
+
                 on_SigTextFieldInit: {
                     setUsage=""
                 }

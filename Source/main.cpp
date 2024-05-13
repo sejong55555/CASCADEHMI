@@ -31,7 +31,7 @@ int main(int argc, char *argv[])
 
     QQmlApplicationEngine engine;
     engine.addImportPath(":/styles");
-    qputenv("QT_VIRTUALKEYBOARD_STYLE", QByteArray("test"));
+    qputenv("QT_VIRTUALKEYBOARD_STYLE", QByteArray("default"));
     engine.rootContext()->setContextProperty("applicationdirpath", QGuiApplication::applicationDirPath());
     AppEngine appEngine(&engine, &app);
 

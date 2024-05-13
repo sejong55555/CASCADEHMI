@@ -2,6 +2,7 @@
 #include "AppProperties.h"
 #include "DefStrings.h"
 #include "Sample.h"
+#include "Enums.h"
 
 AppModel* AppModel::m_pInstance = nullptr;
 QMutex AppModel::m_Mutex;
@@ -141,77 +142,96 @@ QVariantList AppModel::ddc_getSchedules()
 
 bool AppModel::ddc_addSchedule(const QVariantMap &schedule)
 {
-    return ddcInf->addSchedule(schedule);
+    bool bResult = false;
+    if(ddcInf->addSchedule(schedule))
+    {
+        bResult = true;
+
+        if(bResult)
+            emit sigScheduleChanged(ENUMS::SCHEDULE_ADD);
+    }
+    return bResult;
 }
 
 bool AppModel::ddc_setSchedule(const QVariantMap &schedule)
 {
-    return ddcInf->setSchedule(schedule);
+    bool bResult = false;
+    if(ddcInf->setSchedule(schedule))
+    {
+        bResult = true;
+
+        if(bResult)
+            emit sigScheduleChanged(ENUMS::SCHEDULE_EDIT);
+    }
+    return bResult;
 }
 
 bool AppModel::ddc_deleteSchedule(QString scheduleIdText)
 {
-    return ddcInf->deleteSchedule(scheduleIdText);
+    bool bResult = false;
+    if(ddcInf->deleteSchedule(scheduleIdText))
+    {
+        bResult = true;
+
+        if(bResult)
+            emit sigScheduleChanged(ENUMS::SCHEDULE_DELETE);
+    }
+    return bResult;
 }
 
 ///////////////////////////////Monitoring data interface////////////////////////////////
 /**
  * @brief 실내 모니터링 정보 반환 함수.
  */
-QVariantList AppModel::GetMonitorInData()
+QVariantList AppModel::getMonitorInData()
 {
-//    Monitoring_in 데이터 구조
-//    var varCircuitData = {
-//       "strInsideTemp": "30",           // inside temperature
-//       "strResolveTemp": "28",          // resolved inside temperature
-//       "strOutsideTemp": "32",          // outside temperature.
-//       "strInWaterTemp": "30",          // input water temperature.
-//       "strOutWaterTemp": "25",         // out water temperature.
-//       "listCircuitStates": ["ON", "ON","30"],
-//       "listTankTemps": ["888", "555"],
-//    };
+    QVariantList  result = ddcInf->getMonitorInData();
 
-    QVariantList listData = {0};
-    return listData;
+    if (result.isEmpty()) {
+        emit sigGetMonitorInData(false);
+    } else {
+        emit sigGetMonitorInData(true);
+    }
+
+    return  result;
 }
 
 /**
  * @brief 실외 모니터링 정보 반환 함수.
  */
-QVariantList AppModel::GetMonitorOutData()
+QVariantList AppModel::getMonitorOutData()
 {
-//    Monitoring_out 데이터 구조
-//    var varData = { "count"             : 4,
-//                    "listTitle"         : ["heater", "DWH", "heater", "DWH"],
-//                    "listInlet"         : [10, 20, 30, 40],
-//                    "listOutlet"        : [10, 20, 30, 40],
-//                    "listFlowrate"      : [10, 20, 30, 40],
-//                    "listWaterpress"    : [10, 20, 30, 40]
-//    }
+    QVariantList  result =  ddcInf->getMonitorOutData();
 
+    if (result.isEmpty()) {
+        emit sigGetMonitorOutData(false);
+    } else {
+        emit sigGetMonitorOutData(true);
+    }
 
-    QVariantList listData = {0};
-    return listData;
+    return  result;
 }
 
-/**
- * @brief 실외 모니터링 정보 반환 함수.
- * @param strMode : cool, heat, auto, hot water
- */
-QVariantList AppModel::GetCircuitTemp(QString strMode)
+QVariant AppModel::getCircuitTemp(QString strMode)
 {
-//    Circuit temp 데이터 구조
-//    var varData = { "currentTemp": 21.5,
-//                    "resolvedTemp": 20.0 }
+    QVariant  result = ddcInf->getCircuitTemp(strMode);
 
-    QVariantList listData = {0};
-    return listData;
+    if (result.isNull() || !result.isValid()) {
+        emit sigGetCircuitTemp(false);
+    } else {
+        emit sigGetCircuitTemp(true);
+    }
+
+    return  result;
 }
+
 
 /**
  * @brief 에코 모드 설정 함수
  */
-void AppModel::SetECOMode(bool bMode)
+void AppModel::setEcoMode(QString bMode)
 {
-    bMode;
+    ddcInf->setEcoMode(bMode);
+    emit sigSetEcoMode();
 }
+

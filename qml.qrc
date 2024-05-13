@@ -88,5 +88,10 @@
         <file>Qml/setting/TemperatureUnitSetting.qml</file>
         <file>Qml/setting/DateAndTime.qml</file>
         <file>Qml/Common/Monthmodel.qml</file>
+        <file>Qml/function/FunctionHome.qml</file>
+        <file>Qml/function/WaterTempSetting.qml</file>
+        <file>Qml/setting/RemoteWifiParing.qml</file>
+        <file>Qml/setting/Reboot.qml</file>
+        <file>Qml/setting/InstallerSettingHome.qml</file>
     </qresource>
 </RCC>

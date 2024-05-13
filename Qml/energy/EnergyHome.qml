@@ -27,9 +27,17 @@ Rectangle {
     //     totalusage=_totalusage
     // }
 
-    // Component.onCompleted: {
-    //     // sigReadusage("400","1000")
-    // }
+    Component.onCompleted: {
+        // sigReadusage("400","1000")
+        var data = {"curUsage": "210",
+                    "totUsage": "1542"}
+
+        //실제 요청 : 현재 사용 못함.
+        //         data= appModel.GetEnergy();
+
+        currentusage = data["curUsage"];
+        totalusage = data["totUsage"];
+    }
 
     Column{
         id:contentcol
@@ -235,10 +243,4 @@ Rectangle {
             visible=false
         }
     }
-
-    Component.onCompleted: {
-
-    }
-
-
 }

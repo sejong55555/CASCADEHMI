@@ -16,7 +16,8 @@ Item{
     Textmold{
         id: textmold
         anchors.fill: parent
-        textfieldWidth: 400; textfieldHeight: 18
+        textfieldWidth: 400
+        textfieldHeight: 18
         color: "#56595D"
         radius: 21
         clip: true

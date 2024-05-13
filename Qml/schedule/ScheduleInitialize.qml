@@ -54,7 +54,7 @@ Item {
             anchors.horizontalCenter: parent.horizontalCenter
             verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignHCenter
-            text:"Initializing Schecule..."
+            text:qsTr("Initializing Schecule...")
             font.pixelSize: 20
             color:"#222222"
         }

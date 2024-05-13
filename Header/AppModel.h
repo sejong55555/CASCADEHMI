@@ -47,6 +47,11 @@ public:
 
 signals:
     void tempValChanged();
+    void sigScheduleChanged(int nActionMode);   //0 : add, 1 : edit, 2 : delete
+    void sigGetCircuitTemp(bool result);
+    void sigSetEcoMode();
+    void sigGetMonitorInData(bool result);
+    void sigGetMonitorOutData(bool result);
 
 public:
     Q_INVOKABLE bool ddc_setDate(QString date);
@@ -67,11 +72,10 @@ public:
     Q_INVOKABLE bool ddc_deleteSchedule(QString scheduleIdText);
 
 //////////////////////////Monitoring data/////////////////////////////////////
-    Q_INVOKABLE QVariantList    GetMonitorInData();
-    Q_INVOKABLE QVariantList    GetMonitorOutData();
-    Q_INVOKABLE QVariantList    GetCircuitTemp(QString strMode);
-    Q_INVOKABLE void            SetECOMode(bool bMode);
-
+    Q_INVOKABLE QVariantList getMonitorInData();
+    Q_INVOKABLE QVariantList    getMonitorOutData();
+    Q_INVOKABLE QVariant getCircuitTemp(QString strMode);
+    Q_INVOKABLE void setEcoMode(QString bMode);
 private:
     static QMutex m_Mutex;
     static AppModel *m_pInstance;
@@ -95,7 +99,13 @@ private slots:
     signals: void viewModeChanged();
     OCUBE_PROPERTY_WITHOUT_RETURNARG_ON_SIGNAL(int, language, Language)
     signals: void languageChanged();
-
+//    OCUBE_PROPERTY_WITHOUT_RETURNARG_ON_SIGNAL(bool, logMode, LogMode)
+//    signals: void logModeChanged();
+//    //Edit code
+//    OCUBE_PROPERTY_WITHOUT_RETURNARG_ON_SIGNAL(QString, brightness, Brightness)
+//    signals: void brightnessChanged();
+//    OCUBE_PROPERTY_WITHOUT_RETURNARG_ON_SIGNAL(QString, menuHeading, MenuHeading)
+//    signals: void menuHeadingChanged();
 
 public:
     Q_PROPERTY(QString DUMMY_DATA_FOR_LANGUAGE_RELOAD READ DUMMY_DATA_FOR_LANGUAGE_RELOAD  NOTIFY languageChanged)

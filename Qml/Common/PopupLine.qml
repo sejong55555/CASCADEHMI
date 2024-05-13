@@ -1,8 +1,5 @@
 import QtQuick 2.7
-
 import QtQml 2.0
-
-
 import QtGraphicalEffects 1.0
 import QtQuick.Controls.Styles 1.4
 
@@ -37,8 +34,9 @@ Item{
         radius:15
 
         Row{
-            topPadding:176;leftPadding:97;spacing:15
+
             id:buttonRow
+            topPadding:176;leftPadding:97;spacing:15
             anchors.fill:parent
 
             TextButton{id:firstbtn;imagename:"cmd_gray";btntext:"Text";visible:textBtnType
@@ -70,7 +68,7 @@ Item{
             name:"1line"
             PropertyChanges{ target:textmold; textfieldX: 20; textfieldY: 30; wrapEnum: 0}
             PropertyChanges{ target:root; width: 440; height: 136}
-            PropertyChanges{ target:buttonRow; y:80}
+            PropertyChanges{ target:buttonRow; topPadding:80}
         },
 
         State{

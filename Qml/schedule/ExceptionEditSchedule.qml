@@ -51,6 +51,9 @@ Rectangle {
         repeat.sigComponentEnable(enabledFlag)
         startDeteBtn.imagestate=dimFlag
         endDeteBtn.imagestate=dimFlag
+
+        title.sigTextFieldFocus()
+
     }
 
     function initScheduleActEx(){
@@ -76,6 +79,7 @@ Rectangle {
             // width:480;height:272
             width:Variables.sourceWidth+300;height:Variables.sourceWidth-titleBar.height
             contentHeight: listcol.height
+
             clip:true
             Column{
                 id:listcol

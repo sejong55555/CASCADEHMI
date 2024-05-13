@@ -34,6 +34,8 @@ SOURCES += \
         $$ENGINE_DIR/controlpointvalue.cpp \
         $$ENGINE_DIR/schedule.cpp \
         $$ENGINE_DIR/writecontrolpointvalue.cpp \
+        EngineInterface/ddcClient/controlpoint.cpp \
+        EngineInterface/ddcClient/controlpointmanager.cpp \
         Source/Sample.cpp
 
 HEADERS += \
@@ -45,6 +47,8 @@ HEADERS += \
     $$INC_DIR/DefStrings.h \
     $$INC_DIR/DdcInteface.h \
     $$ENGINE_DIR/ddcclient.h \
+    EngineInterface/ddcClient/controlpoint.h \
+    EngineInterface/ddcClient/controlpointmanager.h \
     Header/Sample.h \
     $$ENGINE_DIR/alarminfo.h \
     $$ENGINE_DIR/controlpointvalue.h \

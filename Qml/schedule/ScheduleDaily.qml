@@ -26,12 +26,23 @@ Rectangle{
     property string _hour: ""
     property string _min: ""
     property string _ampm: ""
-    property string _repeat: ""
+    // property string _repeat: ""
+
     property bool _isUse
+    property bool _isPeriod
+    property bool _isEveryWeek
+
+    property string _startDate: ""
+    property string _endDate: ""
+
     property string _runmode: ""
     property string _temp: ""
+
     property var _days
     property real _currentIndex
+
+    property string _id
+    property string _name
 
     signal sigrightItemClickDaily()
     signal sigbackClickDaily()
@@ -235,31 +246,39 @@ Rectangle{
                     }
                     Component.onCompleted: {
                     // days list 추가 한 후에 read
-                        daysText=getRepeatText(days)
-                        console.log("daysText:::"+daysText)
+                        // daysText=getRepeatText(days)
+                        daysText=days
                         if(daysText!=""){split=", "}
                         else{split=""}
                     }
                 }
             // }
             onCurrentIndexChanged: {
-                _hour=_detailModel.get(currentIndex).hour
-                _min=_detailModel.get(currentIndex).min
-                _runmode=_detailModel.get(currentIndex).runningMode
-                _temp=_detailModel.get(currentIndex).temp
-                _ampm=_detailModel.get(currentIndex).ampm
-                _isUse=_detailModel.get(currentIndex).isUse
-                _days=_detailModel.get(currentIndex).days
-                console.log("_days::::::"+_days)
+                _hour = _detailModel.get(currentIndex).hour
+                _min = _detailModel.get(currentIndex).min
+                _runmode = _detailModel.get(currentIndex).runningMode
+                _temp = _detailModel.get(currentIndex).temp
+                _ampm = _detailModel.get(currentIndex).ampm
+                _isUse = _detailModel.get(currentIndex).isUse
 
-                _currentIndex=currentIndex
-                editSchedule.seteditSchedule(_hour,_min,_ampm,_runmode,_temp,_days,_isUse)
+                _id = _detailModel.get(currentIndex).id
+                _name = _detailModel.get(currentIndex).name
+
+                _startDate = _detailModel.get(currentIndex).startDate
+                _endDate = _detailModel.get(currentIndex).endDate
+                _days = _detailModel.get(currentIndex).days
+                _isPeriod = _detailModel.get(currentIndex).isPeriod
+                _isEveryWeek = _detailModel.get(currentIndex).isEveryWeek
+
+                _currentIndex = currentIndex
+
+                editSchedule.seteditSchedule(_hour,_min,_ampm,_runmode,_temp,_days,_isUse,_isEveryWeek,_isPeriod,_startDate,_endDate,_id,_name)
             }
         }
         TextButtonRow{
             x:117;y:61
-            firstbtnText:"Delete"
-            secondbtnText:"Edit"
+            firstbtnText:qsTr("Delete")
+            secondbtnText:qsTr("Edit")
             firstimageName:"schedule_gray";firstfontcolor:"#FFFFFF"
             secondimageName:"cmd_orange"
             onSigRowLClickIn: {
@@ -267,7 +286,7 @@ Rectangle{
             }
 
             onSigRowRClickIn: {
-                editSchedule.seteditSchedule(_hour,_min,_ampm,_runmode,_temp,_days,_isUse)
+                editSchedule.seteditSchedule(_hour,_min,_ampm,_runmode,_temp,_days,_isUse,_isEveryWeek,_isPeriod,_startDate,_endDate,_id,_name)
                 sigeditClickDaily()
             }
         }
@@ -312,7 +331,7 @@ Rectangle{
             MouseArea{
                 anchors.fill:parent
                 onClicked: {
-                    detailVisible=true;
+                    detailVisible = true;
                     _detailModel = detail
                     iconline.currentIndex=index
                 }

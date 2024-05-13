@@ -45,8 +45,11 @@ Rectangle {
             height:48
             lefticonname: "title_menu"
             righticonname: "title_plus"
-            lefticonSize:32;righticonSize:40
-            leftpadding:20;bottompadding:4;iconspacing:372
+            lefticonSize:32
+            righticonSize:40
+            leftpadding:20
+            bottompadding:4
+            iconspacing:372
             onSigRClickPage: {
                 sigmonitoringClick()
             }
@@ -56,9 +59,17 @@ Rectangle {
 
             Textmold{
                 id:timeBox
-                x:200;y:15
-                width:80;height:18;textfieldWidth:width;textfieldHeight:height;fontsize:18;fontcolor: "#222222";horizontalAlignment: Text.AlignRight
-                shadowEnable:false;textshadowEnable: false
+                x:200
+                y:15
+                width:80
+                height:18
+                textfieldWidth:width
+                textfieldHeight:height
+                fontsize:18
+                fontcolor: "#222222"
+                horizontalAlignment: Text.AlignRight
+                shadowEnable:false
+                textshadowEnable: false
                 textfieldText:timeString
             }
         }

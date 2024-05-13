@@ -55,6 +55,7 @@ Rectangle{
                     }
                     onSigReleased: {
                         sigSendRunmode(currentState)
+
                         //currentState에 맞는 기기운전 함수를 callback해서 신호 보냄
                         //home circuit 화면으로 돌아가야함
                     }

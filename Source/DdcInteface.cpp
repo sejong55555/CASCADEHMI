@@ -533,3 +533,215 @@ bool DdcInteface::saveEngineInterfaceLog(QString source, QString set_value, QStr
 }
 
 #endif
+
+QString DdcInteface::getValue(QString pointID)
+{
+    QString result;
+
+    QList<QString> pointIds;
+    pointIds << pointID;
+    m_controlPointValues = mDdcInstance->ReadPointValues(pointIds);
+
+    if (!m_controlPointValues.isEmpty()) {
+        for (ControlPointValue* cpv : m_controlPointValues) {
+            qDebug() << "ID:" << cpv->getId() << "Present Value:" << cpv->getPresentValue();
+            result = cpv->getPresentValue();
+        }
+    }
+
+    return result;
+}
+
+
+QVariantMap DdcInteface::getCircuitTemp(QString runmode)
+{
+    QVariantMap result;
+
+    qDebug()<<__FUNCTION__<<"runmode ="<<runmode;
+
+    //add to modify osea
+    result["currentTemp"] = getValue("030003D");
+    result["resolvedTemp"] =getValue("030003F");
+
+    return result;
+}
+
+void DdcInteface::setEcoMode(QString onOff)
+{
+    qDebug()<<__FUNCTION__<<"On/Off ="<<onOff;
+
+    writePointValue("0300011", onOff);
+}
+
+QVariantList DdcInteface::getMonitorInData()
+{
+    QVariantList resultList;
+
+    //    Monitoring_in 데이터 구조
+    //    var varCircuitData = {
+    //       "strInsideTemp": "30",           // inside temperature
+    //       "strResolveTemp": "28",          // resolved inside temperature
+    //       "strOutsideTemp": "32",          // outside temperature.
+    //       "strInWaterTemp": "30",          // input water temperature.
+    //       "strOutWaterTemp": "25",         // out water temperature.
+    //       "listCircuitStates": ["ON", "ON","30"],
+    //       "listTankTemps": ["888", "555"],
+    //    };
+
+
+    QVariantMap map;
+
+    map["strInsideTemp"] = getValue("030003D"); // inside temperature
+    map["strResolveTemp"] = getValue("030003D"); // resolved inside temperature
+    map["strOutsideTemp"] = getValue("030003D"); // outside temperature.
+    map["strInWaterTemp"] = getValue("030003D"); // input water temperature.
+    map["strOutWaterTemp"] = getValue("030003D"); // out water temperature.
+
+    QVariantList listCircuitStateList;
+    QString firstValue = getValue("030003D");
+    listCircuitStateList.append(firstValue);
+
+    QString secondValue = getValue("030003D");
+    listCircuitStateList.append(secondValue);
+
+    QString thirdValue = getValue("030003D");
+    listCircuitStateList.append(thirdValue);
+    map[ "listCircuitStates"] = listCircuitStateList;
+
+    QVariantList listTankTempList;
+    firstValue = getValue("030003D");
+    listTankTempList.append(firstValue);
+    secondValue = getValue("030003D");
+    listTankTempList.append(secondValue);
+    map["listTankTemps"] = listTankTempList;
+
+    resultList.append(map);
+
+    return resultList;
+}
+
+QVariantList DdcInteface::getMonitorOutData()
+{
+    QVariantList resultList;
+    resultList.clear();
+    //    Monitoring_out 데이터 구조
+    //    var varData = { "count"             : 4,
+    //                    "listTitle"         : ["heater", "DWH", "heater", "DWH"],
+    //                    "listInlet"         : [10, 20, 30, 40],
+    //                    "listOutlet"        : [10, 20, 30, 40],
+    //                    "listFlowrate"      : [10, 20, 30, 40],
+    //                    "listWaterpress"    : [10, 20, 30, 40]
+    //    }
+
+    QVariantMap map;
+    QString count;
+    //map["count"] = getValue("030003D");
+    count = "2";//getValue("030003D");
+
+    bool conversionOK = false;
+    int countValue = count.toInt(&conversionOK);
+    if (!conversionOK) {
+        qWarning()<<__FUNCTION__<<"Fail, read count, outLet ";
+        return resultList;
+    }
+    map["count"] = countValue;
+
+    QVariantList listTitleList;
+    QVariantList listInletList;
+    QVariantList listOutletList;
+    QVariantList listFlowrateList;
+    QVariantList listWaterpressList;
+
+    listTitleList.clear();
+    listInletList.clear();
+    listOutletList.clear();
+    listFlowrateList.clear();
+    listWaterpressList.clear();
+
+    QString setValue;
+    setValue.clear();
+
+    switch (countValue) {
+        case 1:
+            map["listTitle"] = getValue("030003D");
+            map["listInlet"] = getValue("030003D");
+            map["listOutlet"] = getValue("030003D");
+            map["listFlowrate"] = getValue("030003D");
+            map["listWaterpress"] = getValue("030003D");
+            break;
+
+        case 2:
+            //List title
+            setValue = getValue("030003D");
+            listTitleList.append(setValue);
+            setValue.clear();
+            setValue = getValue("030003E");
+            listTitleList.append(setValue);
+            setValue.clear();
+            map["listTitle"] = listTitleList;
+
+            //List in Let
+            setValue = getValue("030003D");
+            listInletList.append(setValue);
+            setValue.clear();
+            setValue = getValue("030003E");
+            listInletList.append(setValue);
+            setValue.clear();
+            map["listInlet"] = listInletList;
+
+            //List out Let
+            setValue = getValue("030003D");
+            listOutletList.append(setValue);
+            setValue.clear();
+            setValue = getValue("030003E");
+            listOutletList.append(setValue);
+            setValue.clear();
+            map["listOutlet"] = listOutletList;
+
+            //List in Let
+            setValue = getValue("030003D");
+            listFlowrateList.append(setValue);
+            setValue.clear();
+            setValue = getValue("030003E");
+            listFlowrateList.append(setValue);
+            setValue.clear();
+            map["listFlowrate"] = listFlowrateList;
+
+            //List out Let
+            setValue = getValue("030003D");
+            listWaterpressList.append(setValue);
+            setValue.clear();
+            setValue = getValue("030003E");
+            listWaterpressList.append(setValue);
+            setValue.clear();
+            map["listWaterpress"] = listWaterpressList;
+
+            break;
+
+        case 3:
+            break;
+
+        case 4:
+            break;
+
+        case 5:
+            break;
+
+        case 6:
+            break;
+
+        case 7:
+            break;
+
+        case 8:
+            break;
+
+        case 9:
+            break;
+
+        default:
+            break;
+    }
+    resultList.append(map);
+    return resultList;
+}

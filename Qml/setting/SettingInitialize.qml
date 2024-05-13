@@ -9,6 +9,12 @@ Item {
     property int currentImage: 0
     property real doneTime: 0
 
+    property alias textBoxText: textBox.text
+
+    property alias colTopPadding: col.topPadding
+    property alias fontsize:textBox.font.pixelSize
+    property alias fontcolor:textBox.color
+
     property string imageIndex: "00"
     signal sigInitDone()
 
@@ -30,6 +36,7 @@ Item {
         }
     }
     Column{
+        id:col
         anchors.fill:parent
         leftPadding:40;topPadding:100;spacing:12
         Image
@@ -54,7 +61,7 @@ Item {
             anchors.horizontalCenter: parent.horizontalCenter
             verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignHCenter
-            text:"Changing language..."
+            // text:qsTr("Changing language...")
             font.pixelSize: 20
             color:"#222222"
         }
@@ -81,6 +88,11 @@ Item {
         initializingSeq.running = false
         // initializingSeq.stop()
         sigInitDone()
+    }
+
+    function animationStop(){
+        currentImage=0;doneTime=0;
+        initializingSeq.running = false
     }
 }
 

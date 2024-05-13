@@ -14,7 +14,7 @@ Rectangle{
     Column{
         TitleBar{
             id:title
-            left_1st_Text:"Date & Time"
+            left_1st_Text:qsTr("Date & Time")
             onSigLClickTitleBar: {
                 sigReadSettingDefault()
                 root.visible=false
@@ -29,7 +29,7 @@ Rectangle{
                     left_1st_Text:model.listName
                     rightItemtextField:model.subText
                     state:model.statename
-                    onSigClick: {
+                    onSigClick: {                        
                         switch(index){
                         case 0:{
                             //time zone설정 visible
@@ -41,20 +41,20 @@ Rectangle{
                         }
 
                         case 2:{
+                            timePopupbg.visible=true
                             break;
                         }
 
                         case 3:{
+                            timeformatPopup.visible=true
                             break;
                         }
-
                         }
                     }
 
             }
         }
     }
-
 
     Rectangle{
         id:datePopupbg
@@ -65,7 +65,7 @@ Rectangle{
         MouseArea{anchors.fill:parent}
         PopupPicker{
             id:datePicker
-            textfieldText: "Date"
+            textfieldText: qsTr("Date")
             anchors.centerIn: parent
             state:"triple"
             secondtextZeroPadding:1;thirdtextZeroPadding:2;
@@ -90,45 +90,134 @@ Rectangle{
         }
     }
 
+    Rectangle{
+        id:timePopupbg
+        color:"#26000000"
+        width:Variables.sourceWidth
+        height:Variables.sourceHeight
+        visible:false
+        MouseArea{anchors.fill:parent}
+        PopupPicker{
+            id:currenttimePicker
+            textfieldText:qsTr("Time")
+            anchors.centerIn: parent
+            midline:false
+            state:"triple"
+            firstmodel:12
+            secondmodel:60
+            thirdmodel:ampmmodel
+
+            onSigCancelClick: {
+                timePopupbg.visible=false
+            }
+            onSigOkClick: {
+                //to do inf에 현재 시간 변경 신호 보내기 나중에 변수 설정 부분 없애기
+                timePopupbg.visible=false
+                hourString=_firstText
+                minString=Variables.padStart(_secondText.toString(),2)
+                ampmString=_thirdText
+
+                // Variables.currentDateUpdate(thirdprefix+_thirdText,_firstText,_secondText+1)
+                sigReadDateSetting()
+            }
+        }
+    }
+
+    PopupList{
+        id:timeformatPopup
+        visible:false
+        scrollviewmodel:timeformatmodel
+        scrollbarEnable:false
+        shadowV:0
+        shadowH:4
+        onSigClickDelegate: {
+            //inf로 setting 값 변경 신호 보내야함
+            if(sendData==0){
+                isAmPm=true//나중에 삭제
+            }
+            else if(sendData==1){
+                isAmPm=false
+            }
+            sigReadDateSetting()
+        }
+
+        Component.onCompleted: {
+            listviewSizeFit()
+            for(var i=0; i < timeformatPopup.scrollviewmodel.count; i++){
+                if(isAmPm===true){
+                    timeformatPopup.sigSelectedDelegate(0)
+                }
+                else if(isAmPm===false){
+                    timeformatPopup.sigSelectedDelegate(1)
+                }
+            }
+        }
+    }
+
+    ListModel{
+        id:ampmmodel
+        ListElement{index:"AM"}
+        ListElement{index:"PM"}
+    }
+
     ListModel{
         id:monthmodel
-        ListElement{index:"January"}
-        ListElement{index:"February"}
-        ListElement{index:"March"}
-        ListElement{index:"April"}
-        ListElement{index:"May"}
-        ListElement{index:"June"}
-        ListElement{index:"July"}
-        ListElement{index:"August"}
-        ListElement{index:"September"}
-        ListElement{index:"October"}
-        ListElement{index:"November"}
-        ListElement{index:"December"}
+        ListElement{index:qsTr("January")}
+        ListElement{index:qsTr("February")}
+        ListElement{index:qsTr("March")}
+        ListElement{index:qsTr("April")}
+        ListElement{index:qsTr("May")}
+        ListElement{index:qsTr("June")}
+        ListElement{index:qsTr("July")}
+        ListElement{index:qsTr("August")}
+        ListElement{index:qsTr("September")}
+        ListElement{index:qsTr("October")}
+        ListElement{index:qsTr("November")}
+        ListElement{index:qsTr("December")}
     }
 
 
     ListModel{
         id:listmodel//*to do time zone설정 date Time, tiem format등 설정
-        ListElement{listName:"Time Zone";statename:"B";subText:""}
-        ListElement{listName:"Date";statename:"B";subText:""}
-        ListElement{listName:"Time";statename:"B";subText:""}
-        ListElement{listName:"Time Format";statename:"B";subText:""}
+        ListElement{listName:qsTr("Time Zone");statename:"B";subText:""}
+        ListElement{listName:qsTr("Date");statename:"B";subText:""}
+        ListElement{listName:qsTr("Time");statename:"B";subText:""}
+        ListElement{listName:qsTr("Time Format");statename:"B";subText:""}
+    }
+
+    ListModel{
+        id:timeformatmodel
+        ListElement{listName:"AM/PM"}
+        ListElement{listName:qsTr("24 Hour")}
+    }
+
+    property string country : qsTr("New York")
+    property bool isAmPm: true
+    // property var timeformat: ["AM/PM",qsTr("24 Hour")]
+
+    property string currentTimeString: Variables.globalTimeString
+    property string hourString:currentTimeString.split(" ")[0].split(":")[0]
+    property string minString :currentTimeString.split(" ")[0].split(":")[1]
+    property int ampmString:currentTimeString.split(" ")[1]==="AM"?1:0
+
+
+    onSigReadDateSetting: {
+        listmodel.get(0).subText = country
+        listmodel.get(1).subText = Variables.globalDateString
+        listmodel.get(2).subText = hourString+":"+minString+" "+ampmmodel.get(ampmString).index
+        if(isAmPm){
+            listmodel.get(3).subText = timeformatmodel.get(0).listName
+        }
+        else{
+            listmodel.get(3).subText = timeformatmodel.get(1).listName
+        }
+
     }
 
     Component.onCompleted: {
-        listmodel.get(0).subText=Variables.country;
-        listmodel.get(1).subText=Variables.globalDateString;
-        listmodel.get(2).subText=Variables.globalTimeString;
-        listmodel.get(3).subText="AM/PM" //*to do format형식 표현을 어떻게 하는걸 말하는거지
+        currenttimePicker._firstdefaultIndex=hourString
+        currenttimePicker._seconddefaultIndex=minString
+        currenttimePicker._thirddefaultIndex=ampmString
+        sigReadDateSetting()
     }
-
-    onSigReadDateSetting: {
-        listmodel.get(0).subText=Variables.country;
-        listmodel.get(1).subText=Variables.globalDateString;
-        listmodel.get(2).subText=Variables.globalTimeString;
-        listmodel.get(3).subText="AM/PM"
-    }
-
-
-
 }

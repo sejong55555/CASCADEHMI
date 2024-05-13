@@ -4,12 +4,11 @@ import QtQml 2.0
 import QtQuick.VirtualKeyboard 2.0
 import "../Global"
 import "../Common"
+import EnumHMI 1.0
 
 Item {
     id: root
     // width: Variables.sourceWidth;height: Variables.sourceHeight
-    property string slientStartTime:""
-    property string slientEndTime:""
 
     property string _silentStartHour
     property string _silentStartMin
@@ -30,6 +29,43 @@ Item {
 
     property var roadingthemodel
 
+    //code by pms : 삭제를 위한 스케쥴 아이디 임시 저장 변수
+    property string strDeleteID: ""
+
+    Connections {
+        target: appModel
+/**
+ * @brief 스케쥴 변경에 따른 업데이트 시그널 철리 슬롯 함수.
+ */
+        function onSigScheduleChanged(action) {
+            console.log("Recv signal schedul change!!!!");
+
+            if(action === EnumHMI.SCHEDULE_ADD) {
+                console.log("change add schedule!");
+                roadingthemodel=modelRead(selectediconSource)
+                addSchedule.initaddSchedule()
+                addSchedule.visible=false
+                popuptoastText=qsTr("A schedule has been added.")
+                popuptoastComponent.visible=true
+                popuptoastComponent.sigFadeStart()
+            } else if(action === EnumHMI.SCHEDULE_EDIT) {
+                console.log("change edit schedule!");
+                roadingthemodel=modelRead(selectediconSource)//model reroad
+                editSchedule.visible=false
+                popuptoastText=qsTr("A schedule has been edited.")
+                popuptoastComponent.visible=true
+                popuptoastComponent.sigFadeStart()
+            } else {
+                //model reroad 필요할 것으로 생각됨.
+                // roadingthemodel=modelRead(selectediconSource)
+                deletePopup.visible=false
+                editSchedule.visible=false
+                popuptoastComponent.visible=true
+                popuptoastComponent.sigFadeStart()
+            }
+        }
+    }
+
     StackView{
         id:stackView
         anchors.fill: parent
@@ -43,6 +79,7 @@ Item {
         subModel: submodel
         titleState:"B"
         onSigrightItemClick: {
+            console.log("ini")
             initilizingConfirmBg.visible=true
         }
         onSiglistBarClick:{//delivery index
@@ -63,7 +100,7 @@ Item {
                 break;
             }
             case "circuit_silent_mode":{
-                editSchedule.setSilentedit(_silentStartHour,_silentStartMin,_silentStartAmpm,_silentEndHour,_silentEndMin,_silentEndAmpm)
+                editSchedule.setSilentedit(_silentStartHour,_silentStartMin,_silentStartAmpm,_silentEndHour,_silentEndMin,_silentEndAmpm,isSilentUse)
                 editSchedule.visible=true
                 break;
             }
@@ -82,7 +119,7 @@ Item {
     Component{
         id:selectedmenulist
         TitleBarWindow{
-            titleName: qsTr(selectedmenu)
+            titleName: selectedmenu
             titleState:"F"
             leftIconSource: selectediconSource
             mainModel:dailyNlist
@@ -194,6 +231,8 @@ Item {
             roadingthemodel=modelRead(selectediconSource)
             exeditSchedule.visible=false
             //*to do interface로 ex schedule 추가
+
+
         }
     }
 
@@ -204,14 +243,32 @@ Item {
             addSchedule.visible=false
             addSchedule.initaddSchedule()
         }
-        onSigDoneClickAdd:{
+        onSigDoneClickAdd :{
             //selectediconSource로 구분해서 DB에 schedule 추가 신호
-            roadingthemodel=modelRead(selectediconSource)
-            addSchedule.initaddSchedule()
-            addSchedule.visible=false
-            popuptoastText=qsTr("A schedule has been added.")
-            popuptoastComponent.visible=true
-            popuptoastComponent.sigFadeStart()
+            console.log("Start add schedule data");
+            console.log(data["isUse"]);
+            console.log(data["time"]);
+            var weekend = data["day"];
+            for(var item in weekend)
+                console.log(weekend[item]);
+            console.log(data["isEveryWeek"]);
+            console.log(data["isPeriod"]);
+            console.log(data["startDate"]);
+            console.log(data["endDate"]);
+            console.log(data["operation"]);
+            console.log(data["temperature"]);
+            console.log("End add schedule data");
+
+            //실제 스케쥴 등록 코드 : 등록 처리는 안되어 있고 업데이트를 위해서 시그널 처리만 되어 있음.
+            appModel.ddc_addSchedule(data);
+
+            //아래 부분은 sigScheduleChanged 시그널 처리 부분으로 이동.
+//            roadingthemodel=modelRead(selectediconSource)
+//            addSchedule.initaddSchedule()
+//            addSchedule.visible=false
+//            popuptoastText=qsTr("A schedule has been added.")
+//            popuptoastComponent.visible=true
+//            popuptoastComponent.sigFadeStart()
         }
     }
 
@@ -223,19 +280,40 @@ Item {
             editSchedule.visible=false
         }
         onSigDoneClickEditSchedule:{
-            //*to Do var somedata를 selectediconSource로 구분해서 DB에 schedule 수정 신호
-            roadingthemodel=modelRead(selectediconSource)//model reroad
-            editSchedule.visible=false
-            popuptoastText=qsTr("A schedule has been edited.")
-            popuptoastComponent.visible=true
-            popuptoastComponent.sigFadeStart()
+            console.log("Start edit schedule data");
+            console.log(data["isUse"]);
+            console.log(data["id"]);
+            console.log(data["name"]);
+            console.log(data["time"]);
+            var weekend = data["day"];
+            for(var item in weekend)
+                console.log(weekend[item]);
+            console.log(data["isEveryWeek"]);
+            console.log(data["isPeriod"]);
+            console.log(data["startDate"]);
+            console.log(data["endDate"]);
+            console.log(data["operation"]);
+            console.log(data["temperature"]);
+            console.log("End edit schedule data");
+
+            //실제 스케쥴 편집 코드 : 편집 처리는 안되어 있고 업데이트를 위해서 시그널 처리만 되어 있음.
+            appModel.ddc_setSchedule(data);
+
+            //아래 부분은 sigScheduleChanged 시그널 처리 부분으로 이동.
+//            roadingthemodel=modelRead(selectediconSource)//model reroad
+//            editSchedule.visible=false
+//            popuptoastText=qsTr("A schedule has been edited.")
+//            popuptoastComponent.visible=true
+//            popuptoastComponent.sigFadeStart()
         }
 
         onSigDeleteClickEditSchedule: {
+            console.log("Schedule delete data id : " + data);
+            strDeleteID = data;
+
             deletePopup.visible=true
         }
     }
-
 
     Rectangle {
         id:deletePopup
@@ -246,28 +324,33 @@ Item {
         MouseArea{anchors.fill:parent}
         PopupPickerRadio{
             anchors.centerIn: parent
-            firstbtnText:"Cancel"
-            secondbtnText:"Delete"
+            firstbtnText:qsTr("Cancel")
+            secondbtnText:qsTr("Delete")
             textfieldText:qsTr("Delete Repeating Schedule")
             firstTextField:qsTr("Only this schedule")
             secondTextField:qsTr("All repeating schedules")
             onSigRightClick: {
                 popuptoastText=qsTr("A schedule has been deleted.")
 
-                //model reroad
-                // roadingthemodel=modelRead(selectediconSource)
+                //아래 부분은 sigScheduleChanged 시그널 처리 부분으로 이동.
+//                //model reroad
+//                // roadingthemodel=modelRead(selectediconSource)
+//                deletePopup.visible=false
+//                editSchedule.visible=false
+//                popuptoastComponent.visible=true
+//                popuptoastComponent.sigFadeStart()
 
-                deletePopup.visible=false
-                editSchedule.visible=false
-                popuptoastComponent.visible=true
-                popuptoastComponent.sigFadeStart()
-
+                var deleteID = -1;
                 if(radiobtnChecked===true){
                     //only this schedule delete
+                    deleteID = strDeleteID;
                 }
                 else if(radiobtn2Checked===true){
                     //all repeat schedule delete
+                    deleteID = "-1"
                 }
+                //실제 스케쥴 편집 코드 : 편집 처리는 안되어 있고 업데이트를 위해서 시그널 처리만 되어 있음.
+                appModel.ddc_deleteSchedule(deleteID);
             }
             onSigLeftClick: {
                 deletePopup.visible=false
@@ -311,8 +394,8 @@ Item {
             state:"2line"
             opacity:1
             textBox:qsTr("All schedule data will be reset.\nAre you sure you want to initialize?")
-            firstbtnText:"Cancel"
-            secondbtnText:"Initialize"
+            firstbtnText:qsTr("Cancel")
+            secondbtnText:qsTr("Initialize")
             onSigLClick: {
                 initilizingConfirmBg.visible= false
             }
@@ -327,18 +410,18 @@ Item {
     //model
     ListModel{
         id: mainmodel
-        ListElement{Listtitle: "Circuit";statename:"G";iconSource:"circuit_1";subText:"";rightItemsourcename:"";}
+        ListElement{Listtitle: qsTr("Circuit");statename:"G";iconSource:"circuit_1";subText:"";rightItemsourcename:"";}
         //main,model에서 circuit 개수에 따라 model 추가되어야 함. circuit은 home에서 read하는 부분에서 읽어서 바로 model에 추가하기
-        ListElement{Listtitle: "Hot Water";statename:"G";iconSource:"circuit_hotwater";subText:"";rightItemsourcename:""}
-        ListElement{Listtitle: "DHW Heater";statename:"G";iconSource:"circuit_DHW_heater";subText:"";rightItemsourcename:""}
-        ListElement{Listtitle: "DHW Recirculation";statename:"G";iconSource:"circuit_DHW_recirculation";subText:"";rightItemsourcename:""}
-        ListElement{Listtitle: "Silent Mode";statename:"H";iconSource:"circuit_silent_mode";subText:"";rightItemsourcename:""}
-        ListElement{Listtitle: "Exception Date";statename:"G";iconSource:"circuit_exception_date";subText:"";rightItemsourcename:""}
+        ListElement{Listtitle: qsTr("Hot Water");statename:"G";iconSource:"circuit_hotwater";subText:"";rightItemsourcename:""}
+        ListElement{Listtitle: qsTr("DHW Heater");statename:"G";iconSource:"circuit_DHW_heater";subText:"";rightItemsourcename:""}
+        ListElement{Listtitle: qsTr("DHW Recirculation");statename:"G";iconSource:"circuit_DHW_recirculation";subText:"";rightItemsourcename:""}
+        ListElement{Listtitle: qsTr("Silent Mode");statename:"H";iconSource:"circuit_silent_mode";subText:"";rightItemsourcename:""}
+        ListElement{Listtitle: qsTr("Exception Date");statename:"G";iconSource:"circuit_exception_date";subText:"";rightItemsourcename:""}
     }
     ListModel{
         id:dailyNlist
-        ListElement{Listtitle: "Daily Schedule";iconSource:"";statename:"A";rightItemsourcename:"";}
-        ListElement{Listtitle: "Schedule List";iconSource:"";statename:"A";rightItemsourcename:"";}
+        ListElement{Listtitle: qsTr("Daily Schedule");iconSource:"";statename:"A";rightItemsourcename:"";}
+        ListElement{Listtitle: qsTr("Schedule List");iconSource:"";statename:"A";rightItemsourcename:"";}
     }
 
     ListModel{
@@ -350,70 +433,14 @@ Item {
     //알맞게 어떻게 변경할까..
     ListModel{
         id:circuitmodel//date객체와 time따로 가져올 수 있을 것으로 예상..
-        // ListElement{date:"2024-04-10";time:"00";
-        //     detail:[
-        //         ListElement{hour:"00";min:"20";runningMode:"on";temp:"";days:""}
-        //     ]
-        // }
-        // ListElement{date:"2024-04-10";time:"06";
-        //     detail:[
-        //         ListElement{hour:"06";min:"20";runningMode:"heat";temp:"28.5";days:""},
-        //         ListElement{hour:"06";min:"37";runningMode:"cool";temp:"17";days:""},
-        //         ListElement{hour:"06";min:"50";runningMode:"auto";temp:"";days:""}
-        //     ]
-        // }
-        // ListElement{date:"2024-04-10";time:"08";
-        //     detail:[
-        //         ListElement{hour:"08";min:"50";runningMode:"cool";temp:"21";days:""}
-        //     ]
-        // }
-        // ListElement{date:"2024-04-10";time:"10";
-        //     detail:[
-        //         ListElement{hour:"10";min:"50";runningMode:"cool";temp:"18";days:""},
-        //         ListElement{hour:"10";min:"50";runningMode:"off";temp:"";days:""}
-        //     ]
-        // }
     }
 
     ListModel{
         id:hotwatermodel
-        ListElement{date:"2024-04-10";time:"06";
-            detail:[
-                ListElement{hour:"06";min:"20";runningMode:"on";temp:"55"},
-                ListElement{hour:"06";min:"37";runningMode:"off";temp:""}
-            ]}
-        ListElement{date:"2024-04-10";time:"08";
-            detail:[
-                ListElement{hour:"06";min:"20";runningMode:"on";temp:"62"},
-                ListElement{hour:"06";min:"37";runningMode:"off";temp:""}
-            ]}
-        ListElement{date:"2024-04-10";time:"15";
-            detail:[
-                ListElement{hour:"06";min:"20";runningMode:"on";temp:"50"},
-                ListElement{hour:"06";min:"50";runningMode:"off";temp:""}
-            ]}
     }
 
     ListModel{
-        id:dhwheatermodel
-        ListElement{date:"2024-04-10";time:"06";
-            detail:[
-                ListElement{hour:"06";min:"20";runningMode:"heat";temp:"28.5"},
-                ListElement{hour:"06";min:"37";runningMode:"cool";temp:"17"},
-                ListElement{hour:"06";min:"50";runningMode:"auto";temp:""}
-            ]}
-        ListElement{date:"2024-04-10";time:"08";
-            detail:[
-                ListElement{hour:"06";min:"20";runningMode:"heat";temp:"28.5"},
-                ListElement{hour:"06";min:"37";runningMode:"cool";temp:"17"},
-                ListElement{hour:"06";min:"50";runningMode:"auto";temp:""}
-            ]}
-        ListElement{date:"2024-04-10";time:"15";
-            detail:[
-                ListElement{hour:"06";min:"20";runningMode:"heat";temp:"28.5"},
-                ListElement{hour:"06";min:"37";runningMode:"cool";temp:"17"},
-                ListElement{hour:"06";min:"50";runningMode:"auto";temp:""}
-            ]}
+        id:dhwheatermodel        
     }
 
     ListModel{
@@ -424,32 +451,46 @@ Item {
         id: submodel
     }
 
+
+
+    ListModel{
+        id:ampmmodel
+        ListElement{index:"AM"}
+        ListElement{index:"PM"}
+    }
+
+
+    property string silentStartTime : "6:00 AM"
+    property string silentEndTime : "2:00 PM"
+    property bool isSilentUse: false
+
+
     function silentRead(){
-        // *to do DB에서 date read해서 저장
-        var slientTimeText
 
-        _silentStartHour="6"
-        _silentStartMin="00"
-        _silentStartAmpm="AM"
+        var silentTimeText
 
-        _silentEndHour="2"
-        _silentEndMin="00"
-        _silentEndAmpm="PM"
+        _silentStartHour=silentStartTime.split(" ")[0].split(":")[0]
+        _silentStartMin=silentStartTime.split(" ")[0].split(":")[1]
+        _silentStartAmpm=silentStartTime.split(" ")[1]==="AM"?0:1
 
-        slientStartTime=_silentStartHour+":"+_silentStartMin+" "+_silentStartAmpm
-        slientEndTime=_silentEndHour+":"+_silentEndMin+" "+_silentEndAmpm
-        slientTimeText=slientStartTime+" ~ "+slientEndTime
+        _silentEndHour=silentEndTime.split(" ")[0].split(":")[0]
+        _silentEndMin=silentEndTime.split(" ")[0].split(":")[1]
+        _silentEndAmpm=silentEndTime.split(" ")[1]==="AM"?0:1
 
-        return slientTimeText
+        var silentStartString = _silentStartHour+":"+_silentStartMin+" "+ampmmodel.get(_silentStartAmpm).index
+        var slientEndString = _silentEndHour+":"+_silentEndMin+" "+ampmmodel.get(_silentEndAmpm).index
 
-        //*to do silence time 읽어오기...
+        silentTimeText=silentStartString+" ~ "+slientEndString
+
+        return silentTimeText
     }
 
     function modelRead(name){
         //To do:날짜 입력부분 추가해서 읽어야함
         var themodelTemp
         //*to do menu에 따라서 read DB data 변경할 수 있게
-        themodelTemp=(name==="circuit_1")?circuitmodel:(name==="circuit_hotwater")?hotwatermodel:(name==="circuit_DHW_heater")?dhwheatermodel:(name==="circuit_DHW_heater")?exceptionlistmodel:dhwrecirculationmodel
+        // themodelTemp=(name==="circuit_1")?circuitmodel:(name==="circuit_hotwater")?hotwatermodel:(name==="circuit_DHW_heater")?dhwheatermodel:(name==="circuit_DHW_heater")?exceptionlistmodel:dhwrecirculationmodel
+        themodelTemp=circuitmodel
         console.log("model's been updated.")
         return themodelTemp
     }
@@ -461,54 +502,81 @@ Item {
                        "isUse": true,
                        "isSpecial": true,
                        "id": "test1",
+                       "name":"My Schedule 1",
                        "time": "8:00 AM",
                        "runmode":"on",
                        "temp":"",
+                       "startDate":"05/10/24",//month,date,year
+                       "endDate":"05/20/24",//month,date,year
                        "days": [true,true,false,true,true,false,true],
                        "weeklySchedules": ["1", "2", "3"],
+                       "isPeriod":true,
+                       "isEveryWeek":false
                     },
                     {
                        "isUse": true,
                        "isSpecial": true,
                        "id": "test2",
+                       "name":"My Schedule 2",
                        "time": "10:12 AM",
                        "runmode":"heat",
                        "temp":"28.5",
-                       "days": [false,false,false,false,false,true,true],
+                       "startDate":"05/10/24",//month,date,year
+                       "endDate":"05/18/24",//month,date,year
+                       "days": [true,false,false,false,false,false,true],
                        "weeklySchedules": ["1", "2", "3"],
-                    },
-                    {
-                       "isUse": true,
-                       "isSpecial": true,
-                       "id": "test2",
-                       "time": "10:47 AM",
-                       "runmode":"cool",
-                       "temp":"18",
-                       "days": [false,false,false,false,false,true,true],
-                       "weeklySchedules": ["1", "2", "3"],
+                       "isPeriod":false,
+                       "isEveryWeek":true
                     },
                     {
                        "isUse": true,
                        "isSpecial": true,
                        "id": "test3",
-                       "time": "11:00 AM",
+                       "name":"My Schedule 3",
+                       "time": "10:47 AM",
                        "runmode":"cool",
-                       "temp":"17",
-                       "days": [true,true,true,true,true,false,false],
+                       "temp":"18",
+                       "startDate":"05/10/24",//month,date,year
+                       "endDate":"05/18/24",//month,date,year
+                       "days": [false,false,false,false,false,true,true],
                        "weeklySchedules": ["1", "2", "3"],
+                       "isPeriod":true,
+                       "isEveryWeek":false
                     },
                     {
                        "isUse": true,
                        "isSpecial": true,
                        "id": "test4",
+                       "name":"My Schedule 4",
+                       "time": "11:00 AM",
+                       "runmode":"cool",
+                       "temp":"17",
+                       "startDate":"05/10/24",//month,date,year
+                       "endDate":"05/19/24",//month,date,year
+                       "days": [true,true,true,true,true,false,false],
+                       "weeklySchedules": ["1", "2", "3"],
+                       "isPeriod":true,
+                       "isEveryWeek":false
+                    },
+                    {
+                       "isUse": true,
+                       "isSpecial": true,
+                       "id": "test5",
+                       "name":"My Schedule 5",
                        "time": "11:43 PM",
                        "runmode":"auto",
                        "temp":"5",
+                       "startDate":"05/10/24",//month,date,year
+                       "endDate":"05/30/24",//month,date,year
                        "days": [true,true,false,false,true,false,false],
                        "weeklySchedules": ["1", "2", "3"],
+                       "isPeriod":true,
+                       "isEveryWeek":false
                     }
                 ]
         circuitmodel.clear()
+        hotwatermodel.clear()
+        dhwheatermodel.clear()
 
         var hourlist=[]
         var uniquehourlist=[]
@@ -518,6 +586,14 @@ Item {
         var runningModelist=[]
         var templist=[]
         var dayslist=[]
+        var idlist=[]
+        var namelist=[]
+
+        var periodlist=[]
+        var everyweeklist=[]
+
+        var startlist=[]
+        var endlist=[]
 
         var detailtemp=[]
                 // {"time":[],"min":[],"isUse":[],"runningMode":[],"temp":[],"days":[]}
@@ -527,6 +603,8 @@ Item {
         var minTemp
         var ampmTemp
         var prehourTemp
+
+        var repeatTextTemp
 
         for(var item=0;item<resultData.length;item++){
             nextindex=item+1
@@ -549,6 +627,12 @@ Item {
             runningModelist.push(resultData[item]["runmode"])
             templist.push(resultData[item]["temp"])
             dayslist.push(resultData[item]["days"])
+            idlist.push(resultData[item]["id"])
+            namelist.push(resultData[item]["name"])
+            startlist.push(resultData[item]["startDate"])
+            endlist.push(resultData[item]["endDate"])
+            periodlist.push(resultData[item]["isPeriod"])
+            everyweeklist.push(resultData[item]["isEveryWeek"])
 
             if(hourTemp!==prehourTemp){
                 hourlist.forEach(function(item) {
@@ -561,9 +645,16 @@ Item {
                               ,"min":minlist
                               ,"ampm":ampmlist
                               ,"isUse":isUselist
+                              ,"id":idlist
+                              ,"name":namelist
                               ,"runningMode":runningModelist
                               ,"temp":templist
-                              ,"days":dayslist})
+                              ,"startDate":startlist
+                              ,"endDate":endlist
+                              ,"days":dayslist
+                              ,"isPeriod":periodlist
+                              ,"isEveryWeek":everyweeklist
+                                })
 
                 hourlist=[];
                 uniquehourlist=[];
@@ -573,6 +664,8 @@ Item {
                 runningModelist=[];
                 templist=[];
                 dayslist=[];
+                idlist=[];
+                namelist=[];
             }
         }
 
@@ -582,17 +675,24 @@ Item {
             for(var j in detailtemp[i]["min"]){
                 // console.log(detailtemp[i]["days"][j])
                 // console.log(typeof(detailtemp[i]["days"][j]))
-                console.log(getRepeatText(detailtemp[i]["days"][j]))
+                repeatTextTemp=getRepeatText(detailtemp[i]["days"][j])
+
                 circuitmodel.get(i).detail.append({hour:detailtemp[i]["hour"][j]
                                                      ,min:detailtemp[i]["min"][j]
                                                      ,ampm:detailtemp[i]["ampm"][j]
                                                      ,isUse:detailtemp[i]["isUse"][j]
                                                      ,runningMode:detailtemp[i]["runningMode"][j]
                                                      ,temp:detailtemp[i]["temp"][j]
+                                                     ,id:detailtemp[i]["id"][j]
+                                                     ,name:detailtemp[i]["name"][j]
+                                                     ,startDate:detailtemp[i]["startDate"][j]
+                                                     ,endDate:detailtemp[i]["endDate"][j]
+                                                     ,isPeriod:detailtemp[i]["isPeriod"][j]
+                                                     ,isEveryWeek:detailtemp[i]["isEveryWeek"][j]
                                                      /*day가 ["MON","","WED",...]가 아닌
                                                      MON 처음 기준으로  [true,false,true,...]로 들어오길 희망..*/
                                                      //
-                                                     ,days:detailtemp[i]["days"][j]
+                                                     ,days:repeatTextTemp
                                                      })
             }
         }
@@ -600,15 +700,15 @@ Item {
 
     function getRepeatText(_days){
         var dayOfWeekidx=0
-
         var dayOfWeekidxList=[]
-
         var repeatTextTemp=""
-        for(var key in _days){
 
+        var dayList=["sun","mon","tue","wed","thu","fri","sat"]
+
+        for(var key=0;key<dayList.length;key++){
             if(_days[key]===true){
                 dayOfWeekidxList.push(dayOfWeekidx)
-                repeatTextTemp+=key+" " //to do 변수에 qsTr할 수 있나
+                repeatTextTemp+=dayList[key]+" " //to do 변수에 qsTr할 수 있나
             }
             dayOfWeekidx++;
         }
@@ -635,9 +735,10 @@ Item {
     InputPanel {
         id: virtualKeyboard
         visible: Qt.inputMethod.visible
-        width: parent.width
-        height: parent.height * 0.4
-        y: parent.height - height
+        // visible: true
+        width: Variables.sourceWidth
+        height: Variables.sourceHeight*0.2
+        y: Variables.sourceHeight - virtualKeyboard.height
     }
 
     Component.onCompleted: {

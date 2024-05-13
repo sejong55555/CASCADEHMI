@@ -54,7 +54,8 @@ Textmold{
         id:tumblerRow
         y:49;leftPadding: 129; rightPadding: 130; spacing: 10
 
-        Tumblercolumn{id:firstTumbler
+        Tumblercolumn{
+            id:firstTumbler
             themodel:firstmodel
             _defaultIndex:_firstdefaultIndex
         }
@@ -116,8 +117,8 @@ Textmold{
     TextButtonRow{
         id:btnrow
         x:97;y:176
-        firstbtnText:"Cancel"
-        secondbtnText:"OK"
+        firstbtnText:qsTr("Cancel")
+        secondbtnText:qsTr("OK")
         onSigRowLClickIn: {
             sigCancelClick()
         }

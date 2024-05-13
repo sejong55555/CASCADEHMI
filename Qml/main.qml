@@ -30,12 +30,13 @@ Window {
 
     function showView() { //loader로 하니까 schedule load시 좀 느린 것 같음....
         var url="setting/SettingHome.qml"
+        // var url="setting/InstallerSettingHome.qml"
         if(Variables.content==="Home"){
             url="monitoring/MonitoringHome.qml";
         }
 
         else if(Variables.content==="Function"){
-            url="monitoring/MonitoringHome.qml";
+            url="function/FunctionHome.qml";
         }
 
         else if(Variables.content==="Schedule"){
@@ -50,7 +51,6 @@ Window {
             url="setting/SettingHome.qml";
         }
 
-        //var url = "HMIMain.qml";
         return url;
     }
 }

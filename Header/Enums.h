@@ -19,6 +19,12 @@ public:
         E_OS_IPHONE
     };
 
+    enum SCHEDULE_MODE {
+        SCHEDULE_ADD = 0,
+        SCHEDULE_EDIT,
+        SCHEDULE_DELETE
+    };
+
 //    enum ENUM_VIEWMODE {
 //        E_VIEW_MAIN,
 //        E_VIEW_MENU,

@@ -117,14 +117,15 @@ Rectangle {
                     item.sigRowLClickIn.connect(sigRowLClick)
                     item.sigRowRClickIn.connect(sigRowRClick)
                 }
+                else if(root.state==="B"){
+                    item.imagename=imagename
+                    item.sigClick.connect(sigRClickTitleBar)
+                }
                 else if(root.state==="D"){
-
                 }
                 else if(root.state==="F"){
                     item.sigClick.connect(sigRClickTitleBar)
-
                 }
-
                 else if(root.state==="G"){
                     item.sigClickSwitch.connect(sigRClickTitleBar)
                 }
