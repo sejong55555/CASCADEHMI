@@ -14,40 +14,69 @@ Rectangle {
 
     property string selectSource :Variables.sourcePath+"img_bar_sel.png"
     property int mulValue:50
-    property var themodel: weekmodel
+    property var themodel: weekmodelaxis
 
-    property bool powerORcalorie: true
+    property bool isPower: true
 
-    property var weekmodel:["1", "2", "3", "4", "5", "6", "7"]
-    property var monthmodel: ["1st","2nd","3rd","4th","5th"]
-    property var yearmodel: ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
+    property var weekmodelaxis:["1", "2", "3", "4", "5", "6", "7"]
+
+    property var monthmodelaxis: ["1st","2nd","3rd","4th","5th"]
+    property var yearmodelaxis: ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
 
     property string axisXText:"(Day)"
 
     signal sigBackClickUsage()
 
-    function usageRead(_powerORcalorie){
-        Variables.heatSummary=[]
-        Variables.coolSummary=[]
-        Variables.dhwSummary=[]
 
-        // var recData = appModel.GetChartData(_powerORcalorie, proride);
-        if(recData > 0) {
+//temp dummy data
+    property variant periodList: {"0":"week","1":"month","2":"year"}
+    property string energyPeriod: periodList["0"]
+    property string dateRange
 
+    property var heatChart
+    property var coolChart
+    property var dhwChart
+
+    property var lastyearChart
+    property var thisyearChart
+
+    function usageRead(_energyPeriod,_energyDateRange){
+        if (_energyDateRange === undefined) {
+            _energyDateRange = Variables.globalTodayMonth+ "/" +Variables.globalTodayDate + "/" + Variables.globalTodayYear
+        }
+        heatChart=[]
+        coolChart=[]
+        dhwChart=[]
+
+        var resultData
+
+        // var resultData = appModel.getChartCalData(_energyPeriod,_energyDateRange); //ex. period:week일 때 date 05/16/24를 인자로 보내면 05/16기준으로 일주일의 power를 읽어옴
+        // var resultData = appModel.getChartPowerData(_energyPeriod,_energyDateRange); //calories 정보를 읽어오기 위함
+
+        if(isPower===true){//전력 버튼이 on일 때
+            // var resultData = appModel.getChartCalData(_energyPeriod,_energyDateRange); //ex. period:week일 때 date 05/16/24를 인자로 보내면 05/16기준으로 일주일의 power를 읽어옴
+            resultData={
+                "heatChart":[30, 50, 80, 130, 50, 180, 40]
+                ,"coolChart":[50, 100, 20, 40, 100, 70, 70]
+                ,"dhwChart":[20, 20, 30, 40, 50, 60, 100]
+                ,"lastyearChart":[20, 20, 30, 40, 50, 60, 100]
+
+            }
+            heatChart = resultData["heatChart"]
+            coolChart = resultData["coolChart"]
+            dhwChart = resultData["dhwChart"]
+
+            lastyearChart = resultData["lastyearChart"]
         }
 
-        if(_powerORcalorie===true){//전력 버튼이 on일 때
-            //저장되어있는 올해 power 사용량 불러와서 저장
-            Variables.heatSummary = [30, 50, 80, 130, 50, 180, 40]
-            Variables.coolSummary = [50, 100, 20, 40, 100, 70, 70]
-            Variables.dhwSummary = [20, 20, 30, 40, 50, 60, 100]
-
-            Variables.lastyearSummary = [20, 20, 30, 40, 50, 60, 100]
-        }
-
-        else if(_powerORcalorie===false){//칼로리 버튼이 on일 때
-            Variables.heatSummary=Variables.thisyearSummary
-
+        else if(isPower===false){//칼로리 버튼이 on일 때
+            // var resultData = appModel.getChartPowerData(_energyPeriod,_energyDateRange); //calories 정보를 읽어오기 위함
+            resultData={
+                "thisyearChart":[30, 50, 80, 130, 50, 180, 40]
+                ,"lastyearChart":[50, 100, 20, 40, 100, 70, 70]
+            }
+            heatChart=resultData["thisyearChart"]
+            lastyearChart = resultData["lastyearChart"]
 
         }
     }
@@ -65,8 +94,8 @@ Rectangle {
             onSigRClickTitleBar: {
                 calorieInfo.visible=!calorieInfo.visible
                 powerInfo.visible=!powerInfo.visible
-                powerORcalorie=!powerORcalorie
-                usageRead(powerORcalorie)
+                isPower=!isPower
+                usageRead(energyPeriod,dateRange)
             }
         }
         TabView {
@@ -75,37 +104,48 @@ Rectangle {
             onCurrentIndexChanged: {
                 if(currentIndex===0){
                     mulValue=50
-                    themodel=weekmodel
+                    themodel=weekmodelaxis
+                    energyPeriod=periodList["0"]
+                    usageRead(energyPeriod,dateRange)
                 }
                 else if(currentIndex===1){
                     mulValue=150
-                    themodel=monthmodel
+                    themodel=monthmodelaxis
+                    energyPeriod=periodList["1"]
+                    usageRead(energyPeriod,dateRange)
                 }
                 else if(currentIndex===2){
                     mulValue=250
-                    themodel=yearmodel
+                    themodel=yearmodelaxis
+                    energyPeriod=periodList["2"]
+                    usageRead(energyPeriod,dateRange)
                 }
             }
             Tab {
                 title: "Week"
                 ChartContent{
+                    id:weekchart
                     _mulValue:50
-                    _themodel:weekmodel
+                    _themodel:weekmodelaxis
                 }
             }
 
-            Tab { title: "Month"
+            Tab {
+                title: "Month"
                 ChartContent{
+                    id:monthchart
                     _mulValue:150
-                    _themodel:monthmodel
+                    _themodel:monthmodelaxis
                     _barWidth:0.242
                     _offset:18
                 }
             }
-            Tab { title: "Year"
+            Tab {
+                title: "Year"
                 ChartContent{
+                    id:yearchart
                     _mulValue:250
-                    _themodel:yearmodel
+                    _themodel:yearmodelaxis
                     _barWidth:0.343
                     _offset:11
                 }
@@ -250,7 +290,7 @@ Rectangle {
             topPadding: 95
             visible:false
             Repeater{
-                model:[{name:"This Year",icSource:"graph_heat"},{name:"This Year",icSource:"graph_lastyear"}]
+                model:[{name:qsTr("This Year"),icSource:"graph_heat"},{name:qsTr("last Year"),icSource:"graph_lastyear"}]
                 IconTemp{
                     iconWidth:12
                     iconHeight: 12
@@ -325,11 +365,6 @@ Rectangle {
     }
 
     Component.onCompleted: {
-        Variables.heatSummary = [30, 50, 80, 130, 50, 180, 40]
-        Variables.coolSummary = [50, 100, 20, 40, 100, 70, 70]
-        Variables.dhwSummary = [20, 20, 30, 40, 50, 60, 100]
-        // Variables.coolSummary = []
-        // Variables.dhwSummary = []
-        Variables.lastyearSummary = [20, 20, 30, 40, 50, 60, 100]
+        usageRead(energyPeriod,dateRange)
     }
 }

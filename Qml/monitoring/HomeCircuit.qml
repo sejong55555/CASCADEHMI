@@ -35,7 +35,7 @@ Rectangle {
         console.log("ECO mode : " + state);
 
         //실제 적용 코드 - 현재 사용 불가.
-//        appModel.SetECOMode(bMode);
+        appModel.setEcoMode(bMode);
     }
 
     Column{
@@ -83,6 +83,10 @@ Rectangle {
                 maxTemp:runmodestring==="Cool"?Variables.coolmax:runmodestring==="Heat"?Variables.heatmax:Variables.automax
                 minTemp:runmodestring==="Cool"?Variables.coolmin:runmodestring==="Heat"?Variables.heatmin:Variables.automin
                 currentTempiconImage:"water2"
+
+                // onSetTempChanged:{
+                //     appModel.setCircuitTemp(setTemp)//osea temp
+                // }
             }
 
             CircuitForm{
@@ -92,6 +96,10 @@ Rectangle {
                 maxTemp:Variables.hotwatermax
                 minTemp:Variables.hotwatermin
                 textfieldText:qsTr("Hot water")
+
+                // onSetTempChanged:{
+                //     appModel.setHotWaterTemp(setTemp) //osea temp
+                // }
             }
         }
         Rectangle{

@@ -208,8 +208,6 @@ Rectangle{
 
             repeatText=getRepeatText(repeatOption._dayOfWeek)
 
-
-
             startYear=_startYearString
             startMonth=_startMonthString
             startDate=_startDate

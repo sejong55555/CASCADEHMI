@@ -11,13 +11,13 @@ Item{
     property int _mulValue: 50
     property real _barWidth:0.34
     property real _offset: 18
-    property var _themodel: ["1", "2", "3", "4", "5", "6", "7"]
+    property var _themodel: ["1", "2", "3", "4", "5", "6", "7"] //for x asix
 
-    property var heatSummary
-    property var coolSummary
-    property var dhwSummary
+    // property var heatSummary //for chart data
+    // property var coolSummary
+    // property var dhwSummary
 
-    property var lastyearSummary
+    // property var lastyearSummary
 
     Rectangle{
         id:currentmold
@@ -49,9 +49,9 @@ Item{
                 }
 
                 //values에 현재 전력 사용량 읽어와서 넣어서 읽기 위함
-                BarSet {color:"#E77F5F";    borderColor:"#E77F5F";  label:"DHW only";   values:Variables.dhwSummary}
-                BarSet {color:"#0B9FE9";    borderColor:"#0B9FE9";  label:"Cool";   values:Variables.coolSummary}
-                BarSet {color:"#FF9305";    borderColor:"#FF9305";  label:"Heat";   values:Variables.heatSummary}
+                BarSet {color:"#E77F5F";    borderColor:"#E77F5F";  label:"DHW only";   values:heatChart}
+                BarSet {color:"#0B9FE9";    borderColor:"#0B9FE9";  label:"Cool";   values:coolChart}
+                BarSet {color:"#FF9305";    borderColor:"#FF9305";  label:"Heat";   values:dhwChart}
             }
         }
     }
@@ -81,7 +81,7 @@ Item{
                        max: _mulValue*5 + 10
                    }
                    //values에 작년 사용량 읽어와서 넣어서 읽기
-                   BarSet { color:"#DEE1E5";borderColor:"#DEE1E5";label: "lastyear"; values: Variables.lastyearSummary }
+                   BarSet { color:"#DEE1E5";borderColor:"#DEE1E5";label: "lastyear"; values: lastyearChart }
             }
         }
     }

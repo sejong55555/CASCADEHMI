@@ -84,9 +84,12 @@ Rectangle{
                             Rectangle{
                                 id:dateDelegate
                                 property bool colorFlag:_dayOfWeek[index]
+                                signal sigcolorChange()
                                 color:colorFlag===true?"#222222":"#DEE1E5"
                                 width:62;height:28
+
                                 Text{
+                                    id:textOfDelegate
                                     width:23;height:14
                                     color:colorFlag===true?"#FFFFFF":"#222222"
                                     text:qsTr(modelData.charAt(0).toUpperCase()+modelData.slice(1))
@@ -95,15 +98,22 @@ Rectangle{
                                     horizontalAlignment: Text.AlignHCenter
                                     font.pixelSize: 14
                                 }
+
                                 MouseArea{
                                     anchors.fill:parent
                                     onClicked: {
+                                        // console.log("_dayOfWeek[index]:::"+_dayOfWeek[index])
+                                        // _dayOfWeek[index]=!(_dayOfWeek[index])
+
                                         dateDelegate.colorFlag=!(dateDelegate.colorFlag)
                                         // _dayOfWeek[modelData]=dateDelegate.colorFlag;
                                         _dayOfWeek[index]=dateDelegate.colorFlag;
-
                                     }
                                 }
+                                onSigcolorChange: {
+                                    colorFlag=_dayOfWeek[index]
+                                }
+
                             }
                         }
                     }
@@ -126,14 +136,6 @@ Rectangle{
             radioExclusive:true
             onSigradioLClick: {
                 isEveryWeek = true;         //code by pms
-
-                // for (var key in _dayOfWeek) {
-                //     _dayOfWeek[key] = true;
-                // }
-                // for (var i = 0; i < repeater.count; ++i) {
-                //     var rect=repeater.itemAt(i)
-                //     rect.colorFlag=true
-                // }
             }
 
             onSigradioLOff: {
@@ -176,7 +178,8 @@ Rectangle{
                         imagename:"date"
                         textBoxW:75;textBoxH:14
                         fontsize:14
-                        btntext:monthmodel.get(_startMonth.split("/")[0]).index.slice(0,3)+" "+_startDate+", "+_startYear
+                        // btntext:monthmodel.get(_startMonth.split("/")[0]-1).index.slice(0,3)+" "+_startDate+", "+_startYear
+                        btntext:_startMonthString+" "+_startDate+", "+_startYear
                         onSigClick: {
                             startdatePopupbg.visible=true
                         }
@@ -198,7 +201,8 @@ Rectangle{
                         imagename:"date"
                         textBoxW:75;textBoxH:14
                         fontsize:14
-                        btntext:monthmodel.get(_endMonth.split("/")[0]).index.slice(0,3)+" "+_endDate+", "+_endYear
+                        // btntext:monthmodel.get(_endMonth.split("/")[0]).index.slice(0,3)+" "+_endDate+", "+_endYear
+                        btntext:_endMonthString+" "+_endDate+", "+_endYear
                         onSigClick: {
                             enddatePopupbg.visible=true
                         }
@@ -228,7 +232,7 @@ Rectangle{
 
             _firstdefaultIndex:Number(_startMonth)
             _seconddefaultIndex:Number(_startDate)-1
-            _thirddefaultIndex:Number(_startYear.slice(2))
+            _thirddefaultIndex:Number(_startYear)
 
             firstmodel:monthmodel;secondmodel:31;thirdmodel:100
 
@@ -236,6 +240,7 @@ Rectangle{
             thirdprefix: "20"
 
             onSigCancelClick: {
+                sigSetDefaultIndex(Number(_startMonth),Number(_startDate)-1,Number(_startYear))
                 startdatePopupbg.visible=false
             }
             onSigOkClick: {
@@ -270,7 +275,7 @@ Rectangle{
 
             _firstdefaultIndex:Number(_endMonth)
             _seconddefaultIndex:Number(_endDate)-1
-            _thirddefaultIndex:Number(_endYear.slice(2))
+            _thirddefaultIndex:Number(_endYear)
 
             firstmodel:monthmodel;secondmodel:31;thirdmodel:100
 
@@ -279,6 +284,7 @@ Rectangle{
 
             onSigCancelClick: {
                 enddatePopupbg.visible=false
+                sigSetDefaultIndex(Number(_endMonth),Number(_endDate)-1,Number(_endYear))
             }
             onSigOkClick: {
                 enddatePopupbg.visible=false
@@ -290,27 +296,12 @@ Rectangle{
         }
     }
 
-    ListModel{
-        id:monthmodel
-        ListElement{index:"January"}
-        ListElement{index:"February"}
-        ListElement{index:"March"}
-        ListElement{index:"April"}
-        ListElement{index:"May"}
-        ListElement{index:"June"}
-        ListElement{index:"July"}
-        ListElement{index:"August"}
-        ListElement{index:"September"}
-        ListElement{index:"October"}
-        ListElement{index:"November"}
-        ListElement{index:"December"}
-    }
 
-    Component.onCompleted: {
-        for (var key in _dayOfWeek) {
-            _dayOfWeek[key] = true;
-        }
-    }
+    // Component.onCompleted: {
+    //     for (var key in _dayOfWeek) {
+    //         _dayOfWeek[key] = true;
+    //     }
+    // }
 
     onIsEveryWeekChanged: {
 
@@ -338,20 +329,27 @@ Rectangle{
     }
 
     function editRepeatInit(__days, __startDate,__endDate,__isEveryWeek,__isPeriod){
-
         _dayOfWeek = repeatTextTolist(__days)
+
+        for (var i = 0; i < repeater.count; ++i) {
+            var rect=repeater.itemAt(i)
+            rect.colorFlag=_dayOfWeek[i]
+        }
+
         startDateString = __startDate
         endDateString = __endDate
 
         _startYear = __startDate.split("/")[2]
-        console.log("_startYear:::"+_startYear)
         // _startMonth = monthmodel.get(__startDate.split("/")[0]).index.slice(0,3)
-        _startMonth = __startDate
+        _startMonth = __startDate.split("/")[0]-1
+
         _startDate = __startDate.split("/")[1]
+
 
         _endYear = __endDate.split("/")[2]
         // _endMonth = monthmodel.get(__endDate.split("/")[0]).index.slice(0,3)
-        _endMonth = __endDate
+        _endMonth = __endDate.split("/")[0]-1
+
         _endDate = __endDate.split("/")[1]
 
         isEveryWeek = __isEveryWeek
@@ -366,19 +364,18 @@ Rectangle{
 
         pickerInit()
 
-
     }
 
     function pickerInit(){
-        startdatePicker.sigSetDefaultIndex(_startMonth,_startDate-1,_startYear)
-        enddatePicker.sigSetDefaultIndex(_endMonth,_endDate-1,_endYear)
+        startdatePicker.sigSetDefaultIndex(_startMonth,Number(_startDate)-1,_startYear)
+        enddatePicker.sigSetDefaultIndex(_endMonth,Number(_endDate)-1,_endYear)
     }
 
     function initRepeatSchedule(){
-        for (var i = 0; i < repeater.count; ++i) {
-            var rect=repeater.itemAt(i)
-            rect.colorFlag=true
-        }
+        // for (var i = 0; i < repeater.count; ++i) {
+        //     var rect=repeater.itemAt(i)
+        //     rect.colorFlag=true
+        // }
         for (var key in _dayOfWeek) {
             _dayOfWeek[key] = true;
         }
@@ -394,6 +391,4 @@ Rectangle{
         repeatOpt.siginitchecked()
         addRepeatInit()
     }
-
-
 }

@@ -67,12 +67,6 @@ QtObject {
     property string globalTodayDate7: globalCurrentDate7.getDate()
 
 
-    property var heatSummary
-    property var coolSummary
-    property var dhwSummary
-
-    property var lastyearSummary
-
     property string language:"Español"
 
     property real tempStep: 0.5//0.5
@@ -88,9 +82,9 @@ QtObject {
 
     property string country: "New York"
 
-    property int screensaverTime:15
-    property bool lcdIdle: false
-    property bool autoReturnMainScreen: false
+    // property int screensaverTime:15 //setting값 읽어와서 global로 저장해서 사용
+    // property bool lcdIdle: false
+    // property bool autoReturnMainScreen: false
 
     property string password: "1234"
 
@@ -145,9 +139,6 @@ QtObject {
         globalTodayYear7= globalCurrentDate7.getFullYear()
         globalTodayDate7= globalCurrentDate7.getDate()
     }
-
-
-
 
     Component.onCompleted: {
         globalCurrentDate= new Date() //string date type

@@ -11,6 +11,12 @@ Rectangle{
 
     MouseArea{anchors.fill:parent}
 
+    property alias alarmImagename: alarmBtn.imagename
+    property alias alarmCountText: alarmCountBox.text
+    property alias alarmCountVisible: alarmCountBox.visible
+    property alias alarmBtnImageState: alarmBtn.imagestate
+    property alias alarmBtnImageSource:alarmBtn.btnsource
+
     signal sigCloseClick()
     signal sigAlarmClick()
 
@@ -29,12 +35,35 @@ Rectangle{
                 Row{
                     leftPadding: 160;topPadding: 6
                     spacing:2
-                    TitleBarButton{width:36;height:width;imagename:"menu_alarm"
+                    TitleBarButton{
+                        id:alarmBtn
+                        width:36
+                        height:width
+                        imagename:"menu_alarm"
                         onSigClick: {
                             sigAlarmClick()
                         }
+
+                        Text{
+                            id:alarmCountBox
+                            // visible:false
+                            x:20.5
+                            y:2
+                            text:"sss"
+                            width:13
+                            height:11
+                            font.pixelSize: 10
+                            color:"#FFFFFF"
+                            verticalAlignment: Text.AlignVCenter
+                            horizontalAlignment: Text.AlignHCenter
+
+
+                        }
                     }
-                    TitleBarButton{width:36;height:width;imagename:"menu_close"
+                    TitleBarButton{
+                        width:36
+                        height:width
+                        imagename:"menu_close"
                         onSigClick: {
                             sigCloseClick()
                         }

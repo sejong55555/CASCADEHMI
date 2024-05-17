@@ -302,7 +302,6 @@ int DdcInteface::getActiveAlarms()
 
 QVariantList DdcInteface::getSchedules()
 {
-    //return m_schedule = mDdcInstance->GetSchedules();
     QVariantList resultList;
     m_schedule = mDdcInstance->GetSchedules();
 
@@ -553,26 +552,26 @@ QString DdcInteface::getValue(QString pointID)
 }
 
 
-QVariantMap DdcInteface::getCircuitTemp(QString runmode)
-{
-    QVariantMap result;
+// QVariantMap DdcInteface::getCircuitTemp(QString runmode)
+// {
+//     QVariantMap result;
 
-    qDebug()<<__FUNCTION__<<"runmode ="<<runmode;
+//     qDebug()<<__FUNCTION__<<"runmode ="<<runmode;
 
-    //add to modify osea
-    result["currentTemp"] = getValue("030003D");
-    result["resolvedTemp"] =getValue("030003F");
+//     result["currentTemp"] = getValue(currentTemp);
+//     result["resolvedTemp"] =getValue(resolvedTemp);
 
-    return result;
-}
+//     return result;
+// }
 
 void DdcInteface::setEcoMode(QString onOff)
 {
-    qDebug()<<__FUNCTION__<<"On/Off ="<<onOff;
+    //qDebug()<<__FUNCTION__<<"On/Off ="<<onOff;
 
-    writePointValue("0300011", onOff);
+    writePointValue(ECO_ONOFF_POINTID, onOff);
 }
 
+/*
 QVariantList DdcInteface::getMonitorInData()
 {
     QVariantList resultList;
@@ -591,27 +590,27 @@ QVariantList DdcInteface::getMonitorInData()
 
     QVariantMap map;
 
-    map["strInsideTemp"] = getValue("030003D"); // inside temperature
-    map["strResolveTemp"] = getValue("030003D"); // resolved inside temperature
-    map["strOutsideTemp"] = getValue("030003D"); // outside temperature.
-    map["strInWaterTemp"] = getValue("030003D"); // input water temperature.
-    map["strOutWaterTemp"] = getValue("030003D"); // out water temperature.
+    map["strInsideTemp"] = getValue(strInsideTemp); // inside temperature
+    map["strResolveTemp"] = getValue(strResolveTemp); // resolved inside temperature
+    map["strOutsideTemp"] = getValue(strOutsideTemp); // outside temperature.
+    map["strInWaterTemp"] = getValue(strInWaterTemp); // input water temperature.
+    map["strOutWaterTemp"] = getValue(strOutWaterTemp); // out water temperature.
 
     QVariantList listCircuitStateList;
-    QString firstValue = getValue("030003D");
+    QString firstValue = getValue(listCircuitStates_1st);
     listCircuitStateList.append(firstValue);
 
-    QString secondValue = getValue("030003D");
+    QString secondValue = getValue(listCircuitStates_2nd);
     listCircuitStateList.append(secondValue);
 
-    QString thirdValue = getValue("030003D");
+    QString thirdValue = getValue(listCircuitStates_3rd);
     listCircuitStateList.append(thirdValue);
     map[ "listCircuitStates"] = listCircuitStateList;
 
     QVariantList listTankTempList;
-    firstValue = getValue("030003D");
+    firstValue = getValue(listTankTemps_1st);
     listTankTempList.append(firstValue);
-    secondValue = getValue("030003D");
+    secondValue = getValue(listTankTemps_2nd);
     listTankTempList.append(secondValue);
     map["listTankTemps"] = listTankTempList;
 
@@ -619,24 +618,16 @@ QVariantList DdcInteface::getMonitorInData()
 
     return resultList;
 }
+*/
 
 QVariantList DdcInteface::getMonitorOutData()
 {
     QVariantList resultList;
     resultList.clear();
-    //    Monitoring_out 데이터 구조
-    //    var varData = { "count"             : 4,
-    //                    "listTitle"         : ["heater", "DWH", "heater", "DWH"],
-    //                    "listInlet"         : [10, 20, 30, 40],
-    //                    "listOutlet"        : [10, 20, 30, 40],
-    //                    "listFlowrate"      : [10, 20, 30, 40],
-    //                    "listWaterpress"    : [10, 20, 30, 40]
-    //    }
 
     QVariantMap map;
     QString count;
-    //map["count"] = getValue("030003D");
-    count = "2";//getValue("030003D");
+    map["count"] = count = getValue(monitoring_out_count);
 
     bool conversionOK = false;
     int countValue = count.toInt(&conversionOK);
@@ -644,7 +635,7 @@ QVariantList DdcInteface::getMonitorOutData()
         qWarning()<<__FUNCTION__<<"Fail, read count, outLet ";
         return resultList;
     }
-    map["count"] = countValue;
+    map["count"] =countValue;
 
     QVariantList listTitleList;
     QVariantList listInletList;
@@ -663,85 +654,1356 @@ QVariantList DdcInteface::getMonitorOutData()
 
     switch (countValue) {
         case 1:
-            map["listTitle"] = getValue("030003D");
-            map["listInlet"] = getValue("030003D");
-            map["listOutlet"] = getValue("030003D");
-            map["listFlowrate"] = getValue("030003D");
-            map["listWaterpress"] = getValue("030003D");
+            map["listTitle"] = getValue(monitoring_out_listTitle_1);
+            map["listInlet"] = getValue(monitoring_out_listInlet_1);
+            map["listOutlet"] = getValue(monitoring_out_listOutlet_1);
+            map["listFlowrate"] = getValue(monitoring_out_listFlowrate_1);
+            map["listWaterpress"] = getValue(monitoring_out_listWaterpress_1);
             break;
 
         case 2:
             //List title
-            setValue = getValue("030003D");
+            setValue = getValue(monitoring_out_listTitle_1);
             listTitleList.append(setValue);
             setValue.clear();
-            setValue = getValue("030003E");
+            setValue = getValue(monitoring_out_listTitle_2);
             listTitleList.append(setValue);
             setValue.clear();
             map["listTitle"] = listTitleList;
 
             //List in Let
-            setValue = getValue("030003D");
+            setValue = getValue(monitoring_out_listInlet_1);
             listInletList.append(setValue);
             setValue.clear();
-            setValue = getValue("030003E");
+            setValue = getValue(monitoring_out_listInlet_2);
             listInletList.append(setValue);
             setValue.clear();
             map["listInlet"] = listInletList;
 
             //List out Let
-            setValue = getValue("030003D");
+            setValue = getValue(monitoring_out_listOutlet_1);
             listOutletList.append(setValue);
             setValue.clear();
-            setValue = getValue("030003E");
+            setValue = getValue(monitoring_out_listOutlet_2);
             listOutletList.append(setValue);
             setValue.clear();
             map["listOutlet"] = listOutletList;
 
             //List in Let
-            setValue = getValue("030003D");
+            setValue = getValue(monitoring_out_listFlowrate_1);
             listFlowrateList.append(setValue);
             setValue.clear();
-            setValue = getValue("030003E");
+            setValue = getValue(monitoring_out_listFlowrate_2);
             listFlowrateList.append(setValue);
             setValue.clear();
             map["listFlowrate"] = listFlowrateList;
 
             //List out Let
-            setValue = getValue("030003D");
+            setValue = getValue(monitoring_out_listWaterpress_1);
             listWaterpressList.append(setValue);
             setValue.clear();
-            setValue = getValue("030003E");
+            setValue = getValue(monitoring_out_listWaterpress_2);
             listWaterpressList.append(setValue);
             setValue.clear();
             map["listWaterpress"] = listWaterpressList;
-
             break;
 
         case 3:
+            //List title
+            setValue = getValue(monitoring_out_listTitle_1);
+            listTitleList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listTitle_2);
+            listTitleList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listTitle_3);
+            listTitleList.append(setValue);
+            setValue.clear();
+            map["listTitle"] = listTitleList;
+
+            //List in Let
+            setValue = getValue(monitoring_out_listInlet_1);
+            listInletList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listInlet_2);
+            listInletList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listInlet_3);
+            listInletList.append(setValue);
+            setValue.clear();
+            map["listInlet"] = listInletList;
+
+            //List out Let
+            setValue = getValue(monitoring_out_listOutlet_1);
+            listOutletList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listOutlet_2);
+            listOutletList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listOutlet_3);
+            listOutletList.append(setValue);
+            setValue.clear();
+            map["listOutlet"] = listOutletList;
+
+            //List in Let
+            setValue = getValue(monitoring_out_listFlowrate_1);
+            listFlowrateList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listFlowrate_2);
+            listFlowrateList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listFlowrate_3);
+            listFlowrateList.append(setValue);
+            setValue.clear();
+            map["listFlowrate"] = listFlowrateList;
+
+            //List out Let
+            setValue = getValue(monitoring_out_listWaterpress_1);
+            listWaterpressList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listWaterpress_2);
+            listWaterpressList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listWaterpress_3);
+            listWaterpressList.append(setValue);
+            setValue.clear();
+            map["listWaterpress"] = listWaterpressList;
             break;
 
         case 4:
+            //List title
+            setValue = getValue(monitoring_out_listTitle_1);
+            listTitleList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listTitle_2);
+            listTitleList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listTitle_3);
+            listTitleList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listTitle_4);
+            listTitleList.append(setValue);
+            setValue.clear();
+            map["listTitle"] = listTitleList;
+
+            //List in Let
+            setValue = getValue(monitoring_out_listInlet_1);
+            listInletList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listInlet_2);
+            listInletList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listInlet_3);
+            listInletList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listInlet_4);
+            listInletList.append(setValue);
+            setValue.clear();
+            map["listInlet"] = listInletList;
+
+            //List out Let
+            setValue = getValue(monitoring_out_listOutlet_1);
+            listOutletList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listOutlet_2);
+            listOutletList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listOutlet_3);
+            listOutletList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listOutlet_4);
+            listOutletList.append(setValue);
+            setValue.clear();
+            map["listOutlet"] = listOutletList;
+
+            //List in Let
+            setValue = getValue(monitoring_out_listFlowrate_1);
+            listFlowrateList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listFlowrate_2);
+            listFlowrateList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listFlowrate_3);
+            listFlowrateList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listFlowrate_4);
+            listFlowrateList.append(setValue);
+            setValue.clear();
+            map["listFlowrate"] = listFlowrateList;
+
+            //List out Let
+            setValue = getValue(monitoring_out_listWaterpress_1);
+            listWaterpressList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listWaterpress_2);
+            listWaterpressList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listWaterpress_3);
+            listWaterpressList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listWaterpress_4);
+            listWaterpressList.append(setValue);
+            setValue.clear();
+            map["listWaterpress"] = listWaterpressList;
             break;
 
         case 5:
+            //List title
+            setValue = getValue(monitoring_out_listTitle_1);
+            listTitleList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listTitle_2);
+            listTitleList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listTitle_3);
+            listTitleList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listTitle_4);
+            listTitleList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listTitle_5);
+            listTitleList.append(setValue);
+            setValue.clear();
+            map["listTitle"] = listTitleList;
+
+            //List in Let
+            setValue = getValue(monitoring_out_listInlet_1);
+            listInletList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listInlet_2);
+            listInletList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listInlet_3);
+            listInletList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listInlet_4);
+            listInletList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listInlet_5);
+            listInletList.append(setValue);
+            setValue.clear();
+            map["listInlet"] = listInletList;
+
+            //List out Let
+            setValue = getValue(monitoring_out_listOutlet_1);
+            listOutletList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listOutlet_2);
+            listOutletList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listOutlet_3);
+            listOutletList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listOutlet_4);
+            listOutletList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listOutlet_5);
+            listOutletList.append(setValue);
+            setValue.clear();
+            map["listOutlet"] = listOutletList;
+
+            //List in Let
+            setValue = getValue(monitoring_out_listFlowrate_1);
+            listFlowrateList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listFlowrate_2);
+            listFlowrateList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listFlowrate_3);
+            listFlowrateList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listFlowrate_4);
+            listFlowrateList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listFlowrate_5);
+            listFlowrateList.append(setValue);
+            setValue.clear();
+            map["listFlowrate"] = listFlowrateList;
+
+            //List out Let
+            setValue = getValue(monitoring_out_listWaterpress_1);
+            listWaterpressList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listWaterpress_2);
+            listWaterpressList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listWaterpress_3);
+            listWaterpressList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listWaterpress_4);
+            listWaterpressList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listWaterpress_5);
+            listWaterpressList.append(setValue);
+            setValue.clear();
+            map["listWaterpress"] = listWaterpressList;
             break;
 
         case 6:
+            //List title
+            setValue = getValue(monitoring_out_listTitle_1);
+            listTitleList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listTitle_2);
+            listTitleList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listTitle_3);
+            listTitleList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listTitle_4);
+            listTitleList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listTitle_5);
+            listTitleList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listTitle_6);
+            listTitleList.append(setValue);
+            setValue.clear();
+            map["listTitle"] = listTitleList;
+
+            //List in Let
+            setValue = getValue(monitoring_out_listInlet_1);
+            listInletList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listInlet_2);
+            listInletList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listInlet_3);
+            listInletList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listInlet_4);
+            listInletList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listInlet_5);
+            listInletList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listInlet_6);
+            listInletList.append(setValue);
+            setValue.clear();
+            map["listInlet"] = listInletList;
+
+            //List out Let
+            setValue = getValue(monitoring_out_listOutlet_1);
+            listOutletList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listOutlet_2);
+            listOutletList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listOutlet_3);
+            listOutletList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listOutlet_4);
+            listOutletList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listOutlet_5);
+            listOutletList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listOutlet_6);
+            listOutletList.append(setValue);
+            setValue.clear();
+            map["listOutlet"] = listOutletList;
+
+            //List in Let
+            setValue = getValue(monitoring_out_listFlowrate_1);
+            listFlowrateList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listFlowrate_2);
+            listFlowrateList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listFlowrate_3);
+            listFlowrateList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listFlowrate_4);
+            listFlowrateList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listFlowrate_5);
+            listFlowrateList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listFlowrate_6);
+            listFlowrateList.append(setValue);
+            setValue.clear();
+            map["listFlowrate"] = listFlowrateList;
+
+            //List out Let
+            setValue = getValue(monitoring_out_listWaterpress_1);
+            listWaterpressList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listWaterpress_2);
+            listWaterpressList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listWaterpress_3);
+            listWaterpressList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listWaterpress_4);
+            listWaterpressList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listWaterpress_5);
+            listWaterpressList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listWaterpress_6);
+            listWaterpressList.append(setValue);
+            setValue.clear();
+            map["listWaterpress"] = listWaterpressList;
             break;
 
         case 7:
+            //List title
+            setValue = getValue(monitoring_out_listTitle_1);
+            listTitleList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listTitle_2);
+            listTitleList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listTitle_3);
+            listTitleList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listTitle_4);
+            listTitleList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listTitle_5);
+            listTitleList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listTitle_6);
+            listTitleList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listTitle_7);
+            listTitleList.append(setValue);
+            setValue.clear();
+            map["listTitle"] = listTitleList;
+
+            //List in Let
+            setValue = getValue(monitoring_out_listInlet_1);
+            listInletList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listInlet_2);
+            listInletList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listInlet_3);
+            listInletList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listInlet_4);
+            listInletList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listInlet_5);
+            listInletList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listInlet_6);
+            listInletList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listInlet_7);
+            listInletList.append(setValue);
+            setValue.clear();
+            map["listInlet"] = listInletList;
+
+            //List out Let
+            setValue = getValue(monitoring_out_listOutlet_1);
+            listOutletList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listOutlet_2);
+            listOutletList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listOutlet_3);
+            listOutletList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listOutlet_4);
+            listOutletList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listOutlet_5);
+            listOutletList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listOutlet_6);
+            listOutletList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listOutlet_7);
+            listOutletList.append(setValue);
+            setValue.clear();
+            map["listOutlet"] = listOutletList;
+
+            //List in Let
+            setValue = getValue(monitoring_out_listFlowrate_1);
+            listFlowrateList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listFlowrate_2);
+            listFlowrateList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listFlowrate_3);
+            listFlowrateList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listFlowrate_4);
+            listFlowrateList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listFlowrate_5);
+            listFlowrateList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listFlowrate_6);
+            listFlowrateList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listFlowrate_7);
+            listFlowrateList.append(setValue);
+            setValue.clear();
+            map["listFlowrate"] = listFlowrateList;
+
+            //List out Let
+            setValue = getValue(monitoring_out_listWaterpress_1);
+            listWaterpressList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listWaterpress_2);
+            listWaterpressList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listWaterpress_3);
+            listWaterpressList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listWaterpress_4);
+            listWaterpressList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listWaterpress_5);
+            listWaterpressList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listWaterpress_6);
+            listWaterpressList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listWaterpress_7);
+            listWaterpressList.append(setValue);
+            setValue.clear();
+            map["listWaterpress"] = listWaterpressList;
             break;
 
         case 8:
+            //List title
+            setValue = getValue(monitoring_out_listTitle_1);
+            listTitleList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listTitle_2);
+            listTitleList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listTitle_3);
+            listTitleList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listTitle_4);
+            listTitleList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listTitle_5);
+            listTitleList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listTitle_6);
+            listTitleList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listTitle_7);
+            listTitleList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listTitle_8);
+            listTitleList.append(setValue);
+            setValue.clear();
+            map["listTitle"] = listTitleList;
+
+            //List in Let
+            setValue = getValue(monitoring_out_listInlet_1);
+            listInletList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listInlet_2);
+            listInletList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listInlet_3);
+            listInletList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listInlet_4);
+            listInletList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listInlet_5);
+            listInletList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listInlet_6);
+            listInletList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listInlet_7);
+            listInletList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listInlet_8);
+            listInletList.append(setValue);
+            setValue.clear();
+            map["listInlet"] = listInletList;
+
+            //List out Let
+            setValue = getValue(monitoring_out_listOutlet_1);
+            listOutletList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listOutlet_2);
+            listOutletList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listOutlet_3);
+            listOutletList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listOutlet_4);
+            listOutletList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listOutlet_5);
+            listOutletList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listOutlet_6);
+            listOutletList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listOutlet_7);
+            listOutletList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listOutlet_8);
+            listOutletList.append(setValue);
+            setValue.clear();
+            map["listOutlet"] = listOutletList;
+
+            //List in Let
+            setValue = getValue(monitoring_out_listFlowrate_1);
+            listFlowrateList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listFlowrate_2);
+            listFlowrateList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listFlowrate_3);
+            listFlowrateList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listFlowrate_4);
+            listFlowrateList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listFlowrate_5);
+            listFlowrateList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listFlowrate_6);
+            listFlowrateList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listFlowrate_7);
+            listFlowrateList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listFlowrate_8);
+            listFlowrateList.append(setValue);
+            setValue.clear();
+            map["listFlowrate"] = listFlowrateList;
+
+            //List out Let
+            setValue = getValue(monitoring_out_listWaterpress_1);
+            listWaterpressList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listWaterpress_2);
+            listWaterpressList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listWaterpress_3);
+            listWaterpressList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listWaterpress_4);
+            listWaterpressList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listWaterpress_5);
+            listWaterpressList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listWaterpress_6);
+            listWaterpressList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listWaterpress_7);
+            listWaterpressList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listWaterpress_8);
+            listWaterpressList.append(setValue);
+            setValue.clear();
+            map["listWaterpress"] = listWaterpressList;
             break;
 
         case 9:
+            //List title
+            setValue = getValue(monitoring_out_listTitle_1);
+            listTitleList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listTitle_2);
+            listTitleList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listTitle_3);
+            listTitleList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listTitle_4);
+            listTitleList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listTitle_5);
+            listTitleList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listTitle_6);
+            listTitleList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listTitle_7);
+            listTitleList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listTitle_8);
+            listTitleList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listTitle_9);
+            listTitleList.append(setValue);
+            setValue.clear();
+            map["listTitle"] = listTitleList;
+
+            //List in Let
+            setValue = getValue(monitoring_out_listInlet_1);
+            listInletList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listInlet_2);
+            listInletList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listInlet_3);
+            listInletList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listInlet_4);
+            listInletList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listInlet_5);
+            listInletList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listInlet_6);
+            listInletList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listInlet_7);
+            listInletList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listInlet_8);
+            listInletList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listInlet_9);
+            listInletList.append(setValue);
+            setValue.clear();
+            map["listInlet"] = listInletList;
+
+            //List out Let
+            setValue = getValue(monitoring_out_listOutlet_1);
+            listOutletList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listOutlet_2);
+            listOutletList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listOutlet_3);
+            listOutletList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listOutlet_4);
+            listOutletList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listOutlet_5);
+            listOutletList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listOutlet_6);
+            listOutletList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listOutlet_7);
+            listOutletList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listOutlet_8);
+            listOutletList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listOutlet_9);
+            listOutletList.append(setValue);
+            setValue.clear();
+            map["listOutlet"] = listOutletList;
+
+            //List in Let
+            setValue = getValue(monitoring_out_listFlowrate_1);
+            listFlowrateList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listFlowrate_2);
+            listFlowrateList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listFlowrate_3);
+            listFlowrateList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listFlowrate_4);
+            listFlowrateList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listFlowrate_5);
+            listFlowrateList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listFlowrate_6);
+            listFlowrateList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listFlowrate_7);
+            listFlowrateList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listFlowrate_8);
+            listFlowrateList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listFlowrate_9);
+            listFlowrateList.append(setValue);
+            setValue.clear();
+            map["listFlowrate"] = listFlowrateList;
+
+            //List out Let
+            setValue = getValue(monitoring_out_listWaterpress_1);
+            listWaterpressList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listWaterpress_2);
+            listWaterpressList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listWaterpress_3);
+            listWaterpressList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listWaterpress_4);
+            listWaterpressList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listWaterpress_5);
+            listWaterpressList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listWaterpress_6);
+            listWaterpressList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listWaterpress_7);
+            listWaterpressList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listWaterpress_8);
+            listWaterpressList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listWaterpress_9);
+            listWaterpressList.append(setValue);
+            setValue.clear();
+            map["listWaterpress"] = listWaterpressList;
             break;
 
-        default:
+        case 10:
+            //List title
+            setValue = getValue(monitoring_out_listTitle_1);
+            listTitleList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listTitle_2);
+            listTitleList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listTitle_3);
+            listTitleList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listTitle_4);
+            listTitleList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listTitle_5);
+            listTitleList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listTitle_6);
+            listTitleList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listTitle_7);
+            listTitleList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listTitle_8);
+            listTitleList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listTitle_9);
+            listTitleList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listTitle_10);
+            listTitleList.append(setValue);
+            setValue.clear();
+            map["listTitle"] = listTitleList;
+
+            //List in Let
+            setValue = getValue(monitoring_out_listInlet_1);
+            listInletList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listInlet_2);
+            listInletList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listInlet_3);
+            listInletList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listInlet_4);
+            listInletList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listInlet_5);
+            listInletList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listInlet_6);
+            listInletList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listInlet_7);
+            listInletList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listInlet_8);
+            listInletList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listInlet_9);
+            listInletList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listInlet_10);
+            listInletList.append(setValue);
+            setValue.clear();
+            map["listInlet"] = listInletList;
+
+            //List out Let
+            setValue = getValue(monitoring_out_listOutlet_1);
+            listOutletList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listOutlet_2);
+            listOutletList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listOutlet_3);
+            listOutletList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listOutlet_4);
+            listOutletList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listOutlet_5);
+            listOutletList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listOutlet_6);
+            listOutletList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listOutlet_7);
+            listOutletList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listOutlet_8);
+            listOutletList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listOutlet_9);
+            listOutletList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listOutlet_10);
+            listOutletList.append(setValue);
+            setValue.clear();
+            map["listOutlet"] = listOutletList;
+
+            //List in Let
+            setValue = getValue(monitoring_out_listFlowrate_1);
+            listFlowrateList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listFlowrate_2);
+            listFlowrateList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listFlowrate_3);
+            listFlowrateList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listFlowrate_4);
+            listFlowrateList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listFlowrate_5);
+            listFlowrateList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listFlowrate_6);
+            listFlowrateList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listFlowrate_7);
+            listFlowrateList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listFlowrate_8);
+            listFlowrateList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listFlowrate_9);
+            listFlowrateList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listFlowrate_10);
+            listFlowrateList.append(setValue);
+            setValue.clear();
+            map["listFlowrate"] = listFlowrateList;
+
+            //List out Let
+            setValue = getValue(monitoring_out_listWaterpress_1);
+            listWaterpressList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listWaterpress_2);
+            listWaterpressList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listWaterpress_3);
+            listWaterpressList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listWaterpress_4);
+            listWaterpressList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listWaterpress_5);
+            listWaterpressList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listWaterpress_6);
+            listWaterpressList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listWaterpress_7);
+            listWaterpressList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listWaterpress_8);
+            listWaterpressList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listWaterpress_9);
+            listWaterpressList.append(setValue);
+            setValue.clear();
+            setValue = getValue(monitoring_out_listWaterpress_10);
+            listWaterpressList.append(setValue);
+            setValue.clear();
+            map["listWaterpress"] = listWaterpressList;
+            break;
+
+        default: //
             break;
     }
     resultList.append(map);
     return resultList;
 }
+
+
+void DdcInteface::setRunMode(QString runmode)
+{    
+    writePointValue(running_mode, runmode);
+}
+
+QString DdcInteface::getRunMode()
+{
+    QString result;
+    result = getValue(running_mode);
+    return result;
+}
+
+void DdcInteface::setCircuitTemp(QString value)
+{
+    writePointValue(circuit_temp, value);
+}
+
+QString DdcInteface::getCircuitTemp()
+{
+    QString result;
+    result = getValue(circuit_temp);
+    return result;
+}
+
+void DdcInteface::setHotWaterTemp(QString value)
+{
+    writePointValue(hotwater_temp, value);
+}
+
+QString DdcInteface::getHotWaterTemp()
+{
+    QString result;
+    result = getValue(hotwater_temp);
+    return result;
+}
+
+
+void DdcInteface::setIndoorTemp(QString value)
+{
+    writePointValue(indoor_temp, value);
+}
+
+QString DdcInteface::getIndoorTemp()
+{
+    QString result;
+    result = getValue(indoor_temp);
+    return result;
+}
+
+void DdcInteface::setSetTemp(QString value)
+{
+    writePointValue(set_temp, value);
+}
+
+QString DdcInteface::getSetTemp()
+{
+    QString result;
+    result = getValue(set_temp);
+    return result;
+}
+
+void DdcInteface::setOutsideTemp(QString value)
+{
+    writePointValue(outside_temp, value);
+}
+
+QString DdcInteface::getOutsideTemp()
+{
+    QString result;
+    result = getValue(outside_temp);
+    return result;
+}
+
+void DdcInteface::setIndoorInputTemp(QString value)
+{
+    writePointValue(indoor_input_temp, value);
+}
+
+QString DdcInteface::getIndoorInputTemp()
+{
+    QString result;
+    result = getValue(indoor_input_temp);
+    return result;
+}
+
+void DdcInteface::setIndoorOutputTemp(QString value)
+{
+    writePointValue(indoor_output_temp, value);
+}
+
+QString DdcInteface::getIndoorOutputTemp()
+{
+    QString result;
+    result = getValue(indoor_output_temp);
+    return result;
+}
+
+
+void DdcInteface::setIndoorHeater(QString value)
+{
+    //qDebug()<<__FUNCTION__<<"##  value ="<<value;
+    writePointValue(indoor_heater, value);
+}
+
+QString DdcInteface::getIndoorHeater()
+{
+    QString result;
+    result = getValue(indoor_heater);
+    //qDebug()<<__FUNCTION__<<"@@ value ="<<result;
+    return result;
+}
+
+void DdcInteface::setIndoorDhwBoost(QString value)
+{
+    writePointValue(indoor_dhw_boost, value);
+}
+
+QString DdcInteface::getIndoorDhwBoost()
+{
+    QString result;
+    result = getValue(indoor_dhw_boost);
+    return result;
+}
+
+void DdcInteface::setIndoorBufferTankTemp(QString value)
+{
+    writePointValue(indoor_buffer_tank_temp, value);
+}
+
+QString DdcInteface::getIndoorBufferTankTemp()
+{
+    QString result;
+    result = getValue(indoor_buffer_tank_temp);
+    return result;
+}
+
+void DdcInteface::setIndoorTankUpTemp(QString value)
+{
+    writePointValue(indoor_tank_up_temp, value);
+}
+
+QString DdcInteface::getIndoorTankUpTemp()
+{
+    QString result;
+    result = getValue(indoor_tank_up_temp);
+    return result;
+}
+
+void DdcInteface::setIndoorTankBottomTemp(QString value)
+{
+    writePointValue(indoor_tank_bottom_temp, value);
+}
+
+QString DdcInteface::getIndoorTankBottomTemp()
+{
+    QString result;
+    result = getValue(indoor_tank_bottom_temp);
+    return result;
+}
+
+QString DdcInteface::getCurrentEnergy()
+{
+    QString result;
+    result = getValue(energy_current);
+    return result;
+}
+
+QString DdcInteface::getTotalEnergy()
+{
+    QString result;
+    result = getValue(energy_total);
+    return result;
+}
+
+void DdcInteface::setSilentMode(QString value)
+{
+    writePointValue(silent_mode, value);
+}
+
+QString DdcInteface::getSilentMode()
+{
+    QString result;
+    result = getValue(silent_mode);
+    return result;
+}
+
+void DdcInteface::setThirdPartyBoilerMode(QString value)
+{
+    writePointValue(third_party_boiler_mode, value);
+}
+
+QString DdcInteface::getThirdPartyBoilerMode()
+{
+    QString result;
+    result = getValue(third_party_boiler_mode);
+    return result;
+}
+
+void DdcInteface::setCoolWaterTemperature(QString value)
+{
+    writePointValue(cool_water_temp, value);
+}
+
+QString DdcInteface::getCoolWaterTemperature()
+{
+    QString result;
+    result = getValue(cool_water_temp);
+    return result;
+}
+
+void DdcInteface::setHotWaterTemperature(QString value)
+{
+    writePointValue(hot_water_temp, value);
+}
+
+QString DdcInteface::getHotWaterTemperature()
+{
+    QString result;
+    result = getValue(hot_water_temp);
+    return result;
+}
+
+
+void DdcInteface::setLanguage(QString value)
+{
+    writePointValue(general_setting_language, value);
+}
+
+QString DdcInteface::getLanguage()
+{
+    QString result;
+    result = getValue(general_setting_language);
+    return result;
+}
+
+void DdcInteface::setTemperatureUnit(QString value)
+{
+    writePointValue(general_setting_temperautre_unit, value);
+}
+
+QString DdcInteface::getTemperatureUnit()
+{
+    QString result;
+    result = getValue(general_setting_temperautre_unit);
+    return result;
+}
+
+//void DdcInteface::setTemperatureMinumUnit(QString value)
+//{
+//    writePointValue(general_setting_temperautre_minimum, value);
+//}
+
+//QString DdcInteface::getTemperatureMinumUnit()
+//{
+//    QString result;
+//    result = getValue(general_setting_temperautre_minimum);
+//   return result;
+//}
+
+void DdcInteface::setTimeZone(QString value)
+{
+    writePointValue(general_setting_timezone, value);
+}
+
+QString DdcInteface::getTimeZone()
+{
+    QString result;
+    result = getValue(general_setting_timezone);
+    return result;
+}
+
+//bool setDate(QString date);
+//bool setTime(QString time);
+
+void DdcInteface::setTimeFormat(QString value)
+{
+    writePointValue(general_setting_timeformat, value);
+}
+
+QString DdcInteface::getTimeFormate()
+{
+    QString result;
+    result = getValue(general_setting_timeformat);
+    return result;
+}
+
+void DdcInteface::setScreenSaveTime(QString value)
+{
+    writePointValue(general_setting_screenSave_timer, value);
+}
+
+QString DdcInteface::getScreenSaveTime()
+{
+    QString result;
+    result = getValue(general_setting_screenSave_timer);
+    return result;
+}
+
+void DdcInteface::setLCDBacklightIdle(QString value)
+{
+    writePointValue(general_setting_screenSave_lcdbacklight_idle, value);
+}
+
+QString DdcInteface::getLCDBacklightIdle()
+{
+    QString result;
+    result = getValue(general_setting_screenSave_lcdbacklight_idle);
+    return result;
+}
+
+void DdcInteface::setAutoRetrunMainScreen(QString value)
+{
+    writePointValue(general_setting_screenSave_auto_return_main_screen, value);
+}
+
+QString DdcInteface::getAutoRetrunMainScreen()
+{
+    QString result;
+    result = getValue(general_setting_screenSave_auto_return_main_screen);
+    return result;
+}
+
+void DdcInteface::setGeneralLock(QString value)
+{
+    writePointValue(general_setting_lock_onoff, value);
+}
+
+QString DdcInteface::getGeneralLock()
+{
+    QString result;
+    result = getValue(general_setting_lock_onoff);
+    return result;
+}
+
+void DdcInteface::setModeLock(QString value)
+{
+    writePointValue(general_setting_mode_lock, value);
+}
+
+QString DdcInteface::getModeLock()
+{
+    QString result;
+    result = getValue(general_setting_mode_lock);
+    return result;
+}
+
+void DdcInteface::setDHWLock(QString value)
+{
+    writePointValue(general_setting_dhw_lock, value);
+}
+
+QString DdcInteface::getDHWLock()
+{
+    QString result;
+    result = getValue(general_setting_dhw_lock);
+    return result;
+}
+
+void DdcInteface::setWifi_Paring(QString value)
+{
+    writePointValue(general_setting_wifi_paring, value);
+}
+
+QString DdcInteface::getWifi_Paring()
+{
+    QString result;
+    result = getValue(general_setting_wifi_paring);
+    return result;
+}
+
+void DdcInteface::setSystemReboot(QString value)
+{
+    writePointValue(general_setting_system_reboot, value);
+}
+

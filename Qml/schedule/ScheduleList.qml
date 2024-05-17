@@ -25,7 +25,7 @@ Rectangle{
     property alias rightItemClickEnable: title.rightItemrangeVisible
 
     signal sigrightItemClick()
-    signal siglistBarClick(int _index,string _selectedmenu,string _selectediconSource)
+    signal sigeditClickList(int _index,string _selectedmenu,string _selectediconSource)
     signal sigbackClick()
 
     Column{
@@ -49,10 +49,7 @@ Rectangle{
             width:480;
             height:root.height-title.height
             z:-1
-            // model:themodel
-            model:detailmodel
-            //temp model
-            // model:circuitmodel
+            model:themodel
             delegate:listdelegate
         }
     }
@@ -69,105 +66,40 @@ Rectangle{
             text:backgroundText
         }
 
-        // PopupToast{
-        //     id:popuptoastComponent
-        //     visible:false
-        //     state:"1line"
-        //     textstring:_popuptoastText
-        //     onSigFadeDone: {
-        //         popuptoastComponent.visible=false
-        //     }
-        // }
-
     Component{
         id:listdelegate
+
         List{
-            property string deviderText: startDay===""?"":" / "
-            property string deviderText2: startDay===""?"":"~"
+            property string deviderText: isEveryWeek===true?"":" / "
+            property string deviderText2: isEveryWeek===true?"":"~"
+
+            property var _startYear: startDate.split("/")[2]
+            property var _startMonth: startDate.split("/")[0]
+            property var _startDate: startDate.split("/")[1]
+
+            property var _endYear: endDate.split("/")[2]
+            property var _endMonth: endDate.split("/")[0]
+            property var _endDate: endDate.split("/")[1]
+
             state:runningMode==="off"||runningMode==="on"||runningMode==="temp"?"D":"D_icon"
             height:52
-            left_1st_Text:hour+":"+min+" "+"AM"
-            left_2nd_Text:repeat+deviderText+startDay+deviderText2+endDay
+            left_1st_Text:hour+":"+min+" "+ampmmodel.get(ampm).index
+            left_2nd_Text:days+deviderText+monthmodel.get(_startMonth).index.slice(0,3)+" "+_startDate+deviderText2+monthmodel.get(_endMonth).index.slice(0,3)+" "+_endDate
             rightItemsourceUrl:"IconTextButton.qml"
             rightItemtextField:runningMode==="off"?"OFF":runningMode==="on"?"ON":runningMode==="temp"?temp+" ̊":""
             rightIconText:temp+" ̊"
             rightIconImage:runningMode==="off"||runningMode==="on"?"":"schedule_"+runningMode
-            // Component.onCompleted: {
-            //    console.log(rightIconImage)
-            // }
-        }
-    }
 
-    // ListModel{
-    //     //daliy나 list나 같은 model을 읽어옴 +버튼 누를 때 같은 모델에 add,
-    //     //model을 임의로 넣어줌 schedule in startDay~endDay 요일만 비교해서 Daily에 넣어줘도되는데...
-    //     id:circuitmodel
-
-    //     ListElement{repeat:"WeekDay";startDay:"";endDay:"";hour:"08";min:"00";runningMode:"cool";temp:"26"}
-    //     ListElement{repeat:"Mon Wed Fri";startDay:"Mar 01";endDay:"Jun 01";hour:"06";min:"00";runningMode:"off";temp:""}
-    //     ListElement{repeat:"Mon Wed Fri";startDay:"";endDay:"";hour:"08";min:"00";runningMode:"heat";temp:"24"}
-    //     ListElement{repeat:"WeekDay";startDay:"";endDay:"";hour:"10";min:"00";runningMode:"temp";temp:"21"}
-    // }
-
-    // ListModel{
-    //     id:hotwatermodel
-
-    //     ListElement{repeat:"WeekDay";startDay:"";endDay:"";hour:"08";min:"00";runningMode:"cool";temp:"26"}
-    //     ListElement{repeat:"Mon Wed Fri";startDay:"Mar 01";endDay:"Jun 01";hour:"06";min:"00";runningMode:"off";temp:""}
-    //     ListElement{repeat:"Mon Wed Fri";startDay:"";endDay:"";hour:"08";min:"00";runningMode:"heat";temp:"24"}
-    //     ListElement{repeat:"WeekDay";startDay:"";endDay:"";hour:"10";min:"00";runningMode:"temp";temp:"21"}
-    // }
-
-    // ListModel{
-    //     id:dhwheatermodel
-    //     ListElement{repeat:"WeekDay";startDay:"";endDay:"";hour:"08";min:"00";runningMode:"cool";temp:"26"}
-    //     ListElement{repeat:"Mon Wed Fri";startDay:"Mar 01";endDay:"Jun 01";hour:"06";min:"00";runningMode:"off";temp:""}
-    //     ListElement{repeat:"Mon Wed Fri";startDay:"";endDay:"";hour:"08";min:"00";runningMode:"heat";temp:"24"}
-    //     ListElement{repeat:"WeekDay";startDay:"";endDay:"";hour:"10";min:"00";runningMode:"temp";temp:"21"}
-    // }
-
-    ListModel{
-        id:dhwrecirculationmodel
-    }
-
-    ListModel{
-        id:detailmodel
-    }
-
-    property var detailmodel2
-
-    Component.onCompleted: {
-        themodel=modelRead(titleIconSource)
-        // themodel=modelRead(titleIconSource)
-        // detailmodel2=themodel.get(1).datail
-        // console.log("time:::::"+detailmodel2.get(0).min)
-        // detailmodelRead(themodel,detailmodel)
-        if(themodel.count!==0){
-            modelEmpty=false
-        }
-    }
-
-    function detailmodelRead(_model,_convertmodel){
-        detailmodel.clear()
-
-        for(var item in _model){
-            var tempdatail=_model.get(item).detail
-            // console.log(tempdatail.get(0).hour)
-            console.log(_model.get(item).time)
-            for(var idx in tempdatail){
-                console.log(tempdatail.get(idx).hour)
-                // _convertmodel.append(tempdatail.get(idx))
-                // console.log("idx:::"+idx+" "+tempdatail[idx].hour)
-                // console.log(_convertmodel.get(idx).hour)
+            onSigClick: {
+                editSchedule.seteditSchedule(hour,min,ampm,runningMode,temp,days,isUse,isEveryWeek,isPeriod,startDate,endDate,id,name)
+                editSchedule.visible=true
             }
         }
     }
 
-
-    function modelRead2(name){
-        //To do:날짜 입력부분 추가해서 읽어야함
-        var _themodel
-        _themodel=(name==="circuit_1")?circuitmodel:(name==="circuit_hotwater")?hotwatermodel:(name==="circuit_DHW_heater")?dhwheatermodel:dhwrecirculationmodel
-        return _themodel
+    Component.onCompleted: {
+        if(themodel.count!==0){
+            modelEmpty=false
+        }
     }
 }

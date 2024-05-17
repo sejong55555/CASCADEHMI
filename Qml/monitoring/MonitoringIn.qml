@@ -40,39 +40,25 @@ Rectangle {
 
     //Iniitalize view data  //code by pms
     Component.onCompleted: {
-        var varCircuitData = {
-           "strInsideTemp": "30",           // inside temperature
-           "strResolveTemp": "28",          // resolved inside temperature
-           "strOutsideTemp": "32",          // outside temperature.
-           "strInWaterTemp": "30",          // input water temperature.
-           "strOutWaterTemp": "25",         // out water temperature.
-           "listCircuitStates": ["ON", "ON","30"],
-           "listTankTemps": ["888", "555"],
-        };
-
-        //인터페이스 연결 코드 - 현재 사용 못함.
-//        varCircuitData = appModel.GetMonitorInData();
-
-        //Serialize data.
-        circuitInsideText = varCircuitData["strInsideTemp"];
-        console.log("Inside temp        : " + circuitInsideText);
-        circuitSetInsideText = varCircuitData["strResolveTemp"];
-        console.log("Resolved temp      : " + circuitSetInsideText);
-        outsideTempText = varCircuitData["strOutsideTemp"];
-        console.log("Outside temp       : " + outsideTempText);
-        inleText = varCircuitData["strInWaterTemp"];
-        console.log("Input water temp   : " + outsideTempText);
-        outletText = varCircuitData["strOutWaterTemp"];
-        console.log("Output water temp  : " + outsideTempText);
-        listStates = varCircuitData["listCircuitStates"];
-        for(var itemState in listStates)
-            console.log("Circuit state  : " + listStates[itemState]);
-        listTankTemps = varCircuitData["listTankTemps"];
-        for(var itemTank in listTankTemps)
-            console.log("Tank temps     : " + listTankTemps[itemTank]);
-
+        // updateValue()
     }
 
+    function updateValue()
+    {
+        circuitInsideText = appModel.getIndoorTemp()
+        circuitSetInsideText = appModel.getSetTemp()
+        outsideTempText = appModel.getOutsideTemp()
+        inleText = appModel.getIndoorInputTemp()
+        outletText = appModel.getIndoorOutputTemp()
+        listStates[0] = appModel.getIndoorHeater()
+        listStates[1] = appModel.getIndoorDhwBoost()
+        listStates[2] = appModel.getIndoorBufferTankTemp()
+        console.log(">>>>>listStes ="+listStates)
+
+        listTankTemps[0] = appModel.getIndoorTankUpTemp()
+        listTankTemps[1] = appModel.getIndoorTankBottomTemp()
+        console.log(">>>>>listTankTemps ="+listTankTemps)
+    }
 
     Image{
         id:backgroundimg

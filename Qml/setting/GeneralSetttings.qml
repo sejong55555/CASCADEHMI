@@ -105,6 +105,7 @@ Rectangle{
                 rebootConfirmBg.visible=false
                 changeLang.visible=true
                 changeLang.initStart()
+                appModel.setSystemReboot("true")
             }
         }
     }
@@ -156,6 +157,11 @@ Rectangle{
             }
 
             case 5:{
+                if(appModel.getWifi_Paring())
+                    wifiPairing =true
+                else
+                    wifiPairing =false
+
                 if(wifiPairing){ listmodel.get(i).subText = "Connected"}
                 else{ listmodel.get(i).subText = "OFF"}
                 break;
@@ -203,6 +209,7 @@ Rectangle{
 
             //todo inf에 변경 신호 보내기
             languageOpt=sendData
+            appModel.setLanguage(languageOpt.toString())
         }
 
         Component.onCompleted: {

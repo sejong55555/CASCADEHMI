@@ -8,6 +8,365 @@
 #define DEFAULT_START_DATE  "20230101"
 #define DEFAULT_END_DATE    "20371231"
 
+#ifdef MOCK_TEST
+#include "../Header/pointIdList.h"
+
+void DdcClient::TestInitValue()
+{
+    WriteControlPointValue m_wControlPointValue;
+    //energy total
+    m_wControlPointValue.setId("10000600");
+    m_wControlPointValue.setSetValue("100");
+    WritePointValue(&m_wControlPointValue);
+
+    //current energy
+    m_wControlPointValue.setId("10000601");
+    m_wControlPointValue.setSetValue("50");
+    WritePointValue(&m_wControlPointValue);
+
+    //ecomode
+    m_wControlPointValue.setId("11000000");
+    m_wControlPointValue.setSetValue("1");
+    WritePointValue(&m_wControlPointValue);
+
+    //current temp
+    m_wControlPointValue.setId("10000501");
+    m_wControlPointValue.setSetValue("18");
+    WritePointValue(&m_wControlPointValue);
+
+    //set temperature
+    m_wControlPointValue.setId("10000504");
+    m_wControlPointValue.setSetValue("21");
+    WritePointValue(&m_wControlPointValue);
+
+    //monitroring indoor temperature
+    m_wControlPointValue.setId("10000503");
+    m_wControlPointValue.setSetValue("23");
+    WritePointValue(&m_wControlPointValue);
+
+    //monitoring indoor outside temperature
+    m_wControlPointValue.setId("10000505");
+    m_wControlPointValue.setSetValue("24.5");
+    WritePointValue(&m_wControlPointValue);
+
+    //monitoring indoor input temperature
+    m_wControlPointValue.setId("10000506");
+    m_wControlPointValue.setSetValue("17");
+    WritePointValue(&m_wControlPointValue);
+
+    //monitoring indoor output temperature
+    m_wControlPointValue.setId("10000507");
+    m_wControlPointValue.setSetValue("19");
+    WritePointValue(&m_wControlPointValue);
+
+    //monitoring indoor heater
+    m_wControlPointValue.setId("10000508");
+    m_wControlPointValue.setSetValue("OFF");
+    WritePointValue(&m_wControlPointValue);
+
+    //monitoring indoor DHW boost
+    m_wControlPointValue.setId("10000509");
+    m_wControlPointValue.setSetValue("OFF");
+    WritePointValue(&m_wControlPointValue);
+
+    //monitoring indoor butter tank temperature
+    m_wControlPointValue.setId("1000050a");
+    m_wControlPointValue.setSetValue("24.5");
+    WritePointValue(&m_wControlPointValue);
+
+    //monitoring out count *******************************************
+    m_wControlPointValue.setId(monitoring_out_count);
+    m_wControlPointValue.setSetValue("8"); //change test
+    WritePointValue(&m_wControlPointValue);
+
+    //monitoring out 1 title
+    m_wControlPointValue.setId(monitoring_out_listTitle_1);
+    m_wControlPointValue.setSetValue("DHW");
+    WritePointValue(&m_wControlPointValue);
+
+    //monitoring out 1 listInlet
+    m_wControlPointValue.setId(monitoring_out_listInlet_1);
+    m_wControlPointValue.setSetValue("1");
+    WritePointValue(&m_wControlPointValue);
+
+    //monitoring out 1 listOutlet
+    m_wControlPointValue.setId(monitoring_out_listOutlet_1);
+    m_wControlPointValue.setSetValue("2");
+    WritePointValue(&m_wControlPointValue);
+
+    //monitoring out 1 listFlowe
+    m_wControlPointValue.setId(monitoring_out_listFlowrate_1);
+    m_wControlPointValue.setSetValue("3");
+    WritePointValue(&m_wControlPointValue);
+
+    //monitoring out 1 listWaterPress
+    m_wControlPointValue.setId(monitoring_out_listWaterpress_1);
+    m_wControlPointValue.setSetValue("4");
+    WritePointValue(&m_wControlPointValue);
+
+    ////////////////////////////////////////////////////////////////
+    //monitoring out 2 title
+    m_wControlPointValue.setId(monitoring_out_listTitle_2);
+    m_wControlPointValue.setSetValue("DHW2");
+    WritePointValue(&m_wControlPointValue);
+
+    //monitoring out 2 listInlet
+    m_wControlPointValue.setId(monitoring_out_listInlet_2);
+    m_wControlPointValue.setSetValue("11");
+    WritePointValue(&m_wControlPointValue);
+
+    //monitoring out 2 listOutlet
+    m_wControlPointValue.setId(monitoring_out_listOutlet_2);
+    m_wControlPointValue.setSetValue("21");
+    WritePointValue(&m_wControlPointValue);
+
+    //monitoring out 2 listFlowe
+    m_wControlPointValue.setId(monitoring_out_listFlowrate_2);
+    m_wControlPointValue.setSetValue("31");
+    WritePointValue(&m_wControlPointValue);
+
+    //monitoring out 2 listWaterPress
+    m_wControlPointValue.setId(monitoring_out_listWaterpress_2);
+    m_wControlPointValue.setSetValue("41");
+    WritePointValue(&m_wControlPointValue);
+
+    ////////////////////////////////////////////////////////////////
+    //monitoring out 3 title
+    m_wControlPointValue.setId(monitoring_out_listTitle_3);
+    m_wControlPointValue.setSetValue("DHW3");
+    WritePointValue(&m_wControlPointValue);
+
+    //monitoring out 3 listInlet
+    m_wControlPointValue.setId(monitoring_out_listInlet_3);
+    m_wControlPointValue.setSetValue("31");
+    WritePointValue(&m_wControlPointValue);
+
+    //monitoring out 3 listOutlet
+    m_wControlPointValue.setId(monitoring_out_listOutlet_3);
+    m_wControlPointValue.setSetValue("31");
+    WritePointValue(&m_wControlPointValue);
+
+    //monitoring out 3 listFlowe
+    m_wControlPointValue.setId(monitoring_out_listFlowrate_3);
+    m_wControlPointValue.setSetValue("33");
+    WritePointValue(&m_wControlPointValue);
+
+    //monitoring out 3 listWaterPress
+    m_wControlPointValue.setId(monitoring_out_listWaterpress_3);
+    m_wControlPointValue.setSetValue("43");
+    WritePointValue(&m_wControlPointValue);
+
+    ////////////////////////////////////////////////////////////////
+    //monitoring out 4 title
+    m_wControlPointValue.setId(monitoring_out_listTitle_4);
+    m_wControlPointValue.setSetValue("DHW4");
+    WritePointValue(&m_wControlPointValue);
+
+    //monitoring out 4 listInlet
+    m_wControlPointValue.setId(monitoring_out_listInlet_4);
+    m_wControlPointValue.setSetValue("41");
+    WritePointValue(&m_wControlPointValue);
+
+    //monitoring out 4 listOutlet
+    m_wControlPointValue.setId(monitoring_out_listOutlet_4);
+    m_wControlPointValue.setSetValue("42");
+    WritePointValue(&m_wControlPointValue);
+
+    //monitoring out 4 listFlowe
+    m_wControlPointValue.setId(monitoring_out_listFlowrate_4);
+    m_wControlPointValue.setSetValue("43");
+    WritePointValue(&m_wControlPointValue);
+
+    //monitoring out 4 listWaterPress
+    m_wControlPointValue.setId(monitoring_out_listWaterpress_4);
+    m_wControlPointValue.setSetValue("44");
+    WritePointValue(&m_wControlPointValue);
+
+    ////////////////////////////////////////////////////////////////
+    //monitoring out 5 title
+    m_wControlPointValue.setId(monitoring_out_listTitle_5);
+    m_wControlPointValue.setSetValue("DHW5");
+    WritePointValue(&m_wControlPointValue);
+
+    //monitoring out 5 listInlet
+    m_wControlPointValue.setId(monitoring_out_listInlet_5);
+    m_wControlPointValue.setSetValue("51");
+    WritePointValue(&m_wControlPointValue);
+
+    //monitoring out 5 listOutlet
+    m_wControlPointValue.setId(monitoring_out_listOutlet_5);
+    m_wControlPointValue.setSetValue("55");
+    WritePointValue(&m_wControlPointValue);
+
+    //monitoring out 5 listFlowe
+    m_wControlPointValue.setId(monitoring_out_listFlowrate_5);
+    m_wControlPointValue.setSetValue("53");
+    WritePointValue(&m_wControlPointValue);
+
+    //monitoring out 5 listWaterPress
+    m_wControlPointValue.setId(monitoring_out_listWaterpress_5);
+    m_wControlPointValue.setSetValue("54");
+    WritePointValue(&m_wControlPointValue);
+
+    ////////////////////////////////////////////////////////////////
+    //monitoring out 6 title
+    m_wControlPointValue.setId(monitoring_out_listTitle_6);
+    m_wControlPointValue.setSetValue("DHW6");
+    WritePointValue(&m_wControlPointValue);
+
+    //monitoring out 6 listInlet
+    m_wControlPointValue.setId(monitoring_out_listInlet_6);
+    m_wControlPointValue.setSetValue("61");
+    WritePointValue(&m_wControlPointValue);
+
+    //monitoring out 6 listOutlet
+    m_wControlPointValue.setId(monitoring_out_listOutlet_6);
+    m_wControlPointValue.setSetValue("65");
+    WritePointValue(&m_wControlPointValue);
+
+    //monitoring out 6 listFlowe
+    m_wControlPointValue.setId(monitoring_out_listFlowrate_6);
+    m_wControlPointValue.setSetValue("63");
+    WritePointValue(&m_wControlPointValue);
+
+    //monitoring out 6 listWaterPress
+    m_wControlPointValue.setId(monitoring_out_listWaterpress_6);
+    m_wControlPointValue.setSetValue("64");
+    WritePointValue(&m_wControlPointValue);
+
+    ////////////////////////////////////////////////////////////////
+    //monitoring out 7 title
+    m_wControlPointValue.setId(monitoring_out_listTitle_7);
+    m_wControlPointValue.setSetValue("DHW7");
+    WritePointValue(&m_wControlPointValue);
+
+    //monitoring out 7 listInlet
+    m_wControlPointValue.setId(monitoring_out_listInlet_7);
+    m_wControlPointValue.setSetValue("71");
+    WritePointValue(&m_wControlPointValue);
+
+    //monitoring out 7 listOutlet
+    m_wControlPointValue.setId(monitoring_out_listOutlet_7);
+    m_wControlPointValue.setSetValue("75");
+    WritePointValue(&m_wControlPointValue);
+
+    //monitoring out 7 listFlowe
+    m_wControlPointValue.setId(monitoring_out_listFlowrate_7);
+    m_wControlPointValue.setSetValue("73");
+    WritePointValue(&m_wControlPointValue);
+
+    //monitoring out 7 listWaterPress
+    m_wControlPointValue.setId(monitoring_out_listWaterpress_7);
+    m_wControlPointValue.setSetValue("74");
+    WritePointValue(&m_wControlPointValue);
+
+    ////////////////////////////////////////////////////////////////
+    //monitoring out 8 title
+    m_wControlPointValue.setId(monitoring_out_listTitle_8);
+    m_wControlPointValue.setSetValue("DHW8");
+    WritePointValue(&m_wControlPointValue);
+
+    //monitoring out 8 listInlet
+    m_wControlPointValue.setId(monitoring_out_listInlet_8);
+    m_wControlPointValue.setSetValue("81");
+    WritePointValue(&m_wControlPointValue);
+
+    //monitoring out 8 listOutlet
+    m_wControlPointValue.setId(monitoring_out_listOutlet_8);
+    m_wControlPointValue.setSetValue("85");
+    WritePointValue(&m_wControlPointValue);
+
+    //monitoring out 8 listFlowe
+    m_wControlPointValue.setId(monitoring_out_listFlowrate_8);
+    m_wControlPointValue.setSetValue("83");
+    WritePointValue(&m_wControlPointValue);
+
+    //monitoring out 8 listWaterPress
+    m_wControlPointValue.setId(monitoring_out_listWaterpress_8);
+    m_wControlPointValue.setSetValue("84");
+    WritePointValue(&m_wControlPointValue);
+
+    ////////////////////////////////////////////////////////////////
+    //monitoring out 9 title
+    m_wControlPointValue.setId(monitoring_out_listTitle_9);
+    m_wControlPointValue.setSetValue("DHW9");
+    WritePointValue(&m_wControlPointValue);
+
+    //monitoring out 9 listInlet
+    m_wControlPointValue.setId(monitoring_out_listInlet_9);
+    m_wControlPointValue.setSetValue("91");
+    WritePointValue(&m_wControlPointValue);
+
+    //monitoring out 9 listOutlet
+    m_wControlPointValue.setId(monitoring_out_listOutlet_9);
+    m_wControlPointValue.setSetValue("95");
+    WritePointValue(&m_wControlPointValue);
+
+    //monitoring out 9 listFlowe
+    m_wControlPointValue.setId(monitoring_out_listFlowrate_9);
+    m_wControlPointValue.setSetValue("93");
+    WritePointValue(&m_wControlPointValue);
+
+    //monitoring out 9 listWaterPress
+    m_wControlPointValue.setId(monitoring_out_listWaterpress_9);
+    m_wControlPointValue.setSetValue("99");
+    WritePointValue(&m_wControlPointValue);
+
+    ////////////////////////////////////////////////////////////////
+    //monitoring out 10 title
+    m_wControlPointValue.setId(monitoring_out_listTitle_10);
+    m_wControlPointValue.setSetValue("DHW10");
+    WritePointValue(&m_wControlPointValue);
+
+    //monitoring out 10 listInlet
+    m_wControlPointValue.setId(monitoring_out_listInlet_10);
+    m_wControlPointValue.setSetValue("01");
+    WritePointValue(&m_wControlPointValue);
+
+    //monitoring out 10 listOutlet
+    m_wControlPointValue.setId(monitoring_out_listOutlet_10);
+    m_wControlPointValue.setSetValue("05");
+    WritePointValue(&m_wControlPointValue);
+
+    //monitoring out 10 listFlowe
+    m_wControlPointValue.setId(monitoring_out_listFlowrate_10);
+    m_wControlPointValue.setSetValue("03");
+    WritePointValue(&m_wControlPointValue);
+
+    //monitoring out 10 listWaterPress
+    m_wControlPointValue.setId(monitoring_out_listWaterpress_10);
+    m_wControlPointValue.setSetValue("09");
+    WritePointValue(&m_wControlPointValue);
+
+    //Function silent mode
+    m_wControlPointValue.setId(silent_mode);
+    m_wControlPointValue.setSetValue("false");
+    WritePointValue(&m_wControlPointValue);
+
+    //Function Third party boiler mode
+    m_wControlPointValue.setId(third_party_boiler_mode);
+    m_wControlPointValue.setSetValue("true");
+    WritePointValue(&m_wControlPointValue);
+
+    //Function cool water temperature
+    m_wControlPointValue.setId(cool_water_temp);
+    m_wControlPointValue.setSetValue("18");
+    WritePointValue(&m_wControlPointValue);
+
+    //Function hot water temperature
+    m_wControlPointValue.setId(hot_water_temp);
+    m_wControlPointValue.setSetValue("33");
+    WritePointValue(&m_wControlPointValue);
+
+
+
+
+
+
+}
+
+#endif
+
 DdcClient::DdcClient(QObject *parent) : QObject(parent)
 {
 #ifndef MOCK_TEST
@@ -16,6 +375,8 @@ DdcClient::DdcClient(QObject *parent) : QObject(parent)
     {
         qWarning("Point Attach failed.\n");
     }
+#else
+    TestInitValue();
 #endif
     QSqlDatabase::addDatabase("QSQLITE");
     qDebug() << "SQLite added.";
@@ -133,8 +494,17 @@ QList<ControlPointValue*> DdcClient::ReadPointValues(QList<QString> pointIds)
     foreach(QString idText, pointIds)
     {
         ControlPointValue *pPointValue = new ControlPointValue;
+
+        // pPointValue->setId(idText);
+        // pPointValue->setPresentValue(QString::number(valueCounter));
+
+        for (const PointData &point : points) {
+            if (point.pointID == idText) {
+                pPointValue->setPresentValue(point.value);
+            }
+        }
         pPointValue->setId(idText);
-        pPointValue->setPresentValue(QString::number(valueCounter));
+
         pPointValue->setAlarmStatus(valueCounter);
         pPointValue->setOutOfService(valueCounter);
         pPointValue->setCorrectionValue(valueCounter);
@@ -195,11 +565,17 @@ bool DdcClient::WritePointValues(QList<WriteControlPointValue*> writePointValues
         result = false;
     else result = true;
 #else
-    //tempoary test -->
+    PointData pointTemp;
     foreach(WriteControlPointValue *pPointValue, writePointValues)
     {
         qDebug() << "Point ID : " << pPointValue->getId();
         qDebug() << "Point value : " << pPointValue->getSetValue().toStdString().c_str();
+
+        pointTemp.pointID = pPointValue->getId();
+        pointTemp.value = pPointValue->getSetValue().toStdString().c_str();
+
+        points.append(pointTemp);
+
     }
 
 #endif

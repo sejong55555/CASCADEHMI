@@ -22,6 +22,12 @@
 #ifndef MOCK_TEST
 #define SCHEDULE_DB_PATH "/mnt/flash/schedule_setting.db"
 #define ALARM_DB_PATH    "/mnt/flash/alarm.db"
+#else
+#include <QVector>
+struct PointData{
+    QString pointID;
+    QString value;
+};
 #endif
 
 class DdcClient : public QObject
@@ -38,6 +44,8 @@ private :
 #ifdef MOCK_TEST
     QString SCHEDULE_DB_PATH;
     QString ALARM_DB_PATH;
+    QVector<PointData> points;
+    void TestInitValue();
 #endif
 public:
     bool SetDate(QString &date);

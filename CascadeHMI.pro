@@ -6,7 +6,7 @@ CONFIG += c++11 app_bundle
 # any Qt feature that has been marked deprecated (the exact warnings
 # depend on your compiler). Refer to the documentation for the
 # deprecated API to know how to port your code away from it.
-DEFINES += QT_DEPRECATED_WARNINGS ENABLE_DEBUG MOCK_TEST DEBUG_SAVE_LOG
+DEFINES += QT_DEPRECATED_WARNINGS ENABLE_DEBUG MOCK_TEST
 
 # You can make your code fail to compile if it uses deprecated APIs.
 # In order to do so, uncomment the following line.
@@ -53,7 +53,8 @@ HEADERS += \
     $$ENGINE_DIR/alarminfo.h \
     $$ENGINE_DIR/controlpointvalue.h \
     $$ENGINE_DIR/schedule.h \
-    $$ENGINE_DIR/writecontrolpointvalue.h
+    $$ENGINE_DIR/writecontrolpointvalue.h \
+    Header/pointIdList.h
 
 RESOURCES += qml.qrc \
     images.qrc \

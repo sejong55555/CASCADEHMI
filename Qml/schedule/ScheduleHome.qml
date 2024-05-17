@@ -25,6 +25,9 @@ Item {
 
     property string popuptoastText :""
 
+    property bool isDaily: true
+    property string whichDevice: ""
+
     property var homeListmodel
 
     property var roadingthemodel
@@ -42,7 +45,7 @@ Item {
 
             if(action === EnumHMI.SCHEDULE_ADD) {
                 console.log("change add schedule!");
-                roadingthemodel=modelRead(selectediconSource)
+                roadingthemodel=modelRead(whichDevice)
                 addSchedule.initaddSchedule()
                 addSchedule.visible=false
                 popuptoastText=qsTr("A schedule has been added.")
@@ -50,14 +53,14 @@ Item {
                 popuptoastComponent.sigFadeStart()
             } else if(action === EnumHMI.SCHEDULE_EDIT) {
                 console.log("change edit schedule!");
-                roadingthemodel=modelRead(selectediconSource)//model reroad
+                roadingthemodel=modelRead(whichDevice)//model reroad
                 editSchedule.visible=false
                 popuptoastText=qsTr("A schedule has been edited.")
                 popuptoastComponent.visible=true
                 popuptoastComponent.sigFadeStart()
             } else {
                 //model reroad 필요할 것으로 생각됨.
-                // roadingthemodel=modelRead(selectediconSource)
+                // roadingthemodel=modelRead(whichDevice)
                 deletePopup.visible=false
                 editSchedule.visible=false
                 popuptoastComponent.visible=true
@@ -84,24 +87,25 @@ Item {
         }
         onSiglistBarClick:{//delivery index
             selectedmenu=_selectedmenu
-            selectediconSource=_selectediconSource
-            console.log(selectedmenu+"  "+selectediconSource)
-            roadingthemodel=modelRead(selectediconSource)//스케쥴 리스트 해당 디바이스에 맞는 model 불러오기
-            editSchedule.sigmodelchange(selectediconSource)
 
-            switch(selectediconSource){
-            case "circuit_DHW_recirculation":{
+            whichDevice=mainmodel.get(_index).Listtitle
+            selectediconSource=mainmodel.get(_index).iconSource
+            //스케쥴 리스트 해당 디바이스에 맞는 model 불러오기
+            switch(_index){
+
+            case 3:{
+                roadingthemodel=modelRead(whichDevice)
                 stackView.push(dhwrecirculation)
                 break;
             }
-            case "circuit_exception_date":{
-                stackView.push(exeptionSchedule)
-                // exeptionSchedule.visible=true
-                break;
-            }
-            case "circuit_silent_mode":{
+            case 4:{
                 editSchedule.setSilentedit(_silentStartHour,_silentStartMin,_silentStartAmpm,_silentEndHour,_silentEndMin,_silentEndAmpm,isSilentUse)
                 editSchedule.visible=true
+                break;
+            }
+            case 5:{
+                stackView.push(exeptionSchedule)
+                // exeptionSchedule.visible=true
                 break;
             }
             default:{
@@ -109,6 +113,8 @@ Item {
                 break;
             }
             }
+            console.log(selectedmenu+"  "+selectediconSource)
+            editSchedule.sigmodelchange(selectediconSource)
         }
         onSigbackClick:{
             Variables.content="Home"
@@ -131,10 +137,14 @@ Item {
 
                 switch(_index){
                 case 0:{
+                    isDaily=true
+                    roadingthemodel=modelRead(whichDevice)
                     stackView.push(dailyschedule)
                     break;}
                 case 1:{
-                    stackView.push(schedulelist)
+                    isDaily=false
+                    roadingthemodel=modelRead(whichDevice)
+                    stackView.push(listschedule)
                     break;}
                 }
             }
@@ -175,9 +185,8 @@ Item {
     }
 
     Component{
-        id:schedulelist
+        id:listschedule
         ScheduleList{
-            // titleName:"Schedule List"
             titleIconSource:selectediconSource
             themodel:roadingthemodel
             onSigrightItemClick:{
@@ -214,7 +223,7 @@ Item {
             exaddSchedule.visible=false
         }
         onSigDoneClickExAdd: {
-            roadingthemodel=modelRead(selectediconSource)
+            // roadingthemodel=modelRead(whichDevice)
             exaddSchedule.visible=false
             //*to do interface로 ex schedule 추가
         }
@@ -228,7 +237,7 @@ Item {
             exeditSchedule.visible=false
         }
         onSigDoneClickExEdit: {
-            roadingthemodel=modelRead(selectediconSource)
+            // roadingthemodel=modelRead(whichDevice)
             exeditSchedule.visible=false
             //*to do interface로 ex schedule 추가
 
@@ -436,6 +445,11 @@ Item {
     }
 
     ListModel{
+        id:listschedulemodel
+    }
+
+
+    ListModel{
         id:hotwatermodel
     }
 
@@ -451,6 +465,21 @@ Item {
         id: submodel
     }
 
+    ListModel{
+        id:monthmodel
+        ListElement{index:"January"}
+        ListElement{index:"February"}
+        ListElement{index:"March"}
+        ListElement{index:"April"}
+        ListElement{index:"May"}
+        ListElement{index:"June"}
+        ListElement{index:"July"}
+        ListElement{index:"August"}
+        ListElement{index:"September"}
+        ListElement{index:"October"}
+        ListElement{index:"November"}
+        ListElement{index:"December"}
+    }
 
 
     ListModel{
@@ -485,18 +514,174 @@ Item {
         return silentTimeText
     }
 
-    function modelRead(name){
+    function modelRead(_device,_date){
+        if (_date === undefined) {
+            _date = Variables.globalTodayMonth+ "/" +Variables.globalTodayDate + "/" + Variables.globalTodayYear
+        }
+
         //To do:날짜 입력부분 추가해서 읽어야함
         var themodelTemp
-        //*to do menu에 따라서 read DB data 변경할 수 있게
         // themodelTemp=(name==="circuit_1")?circuitmodel:(name==="circuit_hotwater")?hotwatermodel:(name==="circuit_DHW_heater")?dhwheatermodel:(name==="circuit_DHW_heater")?exceptionlistmodel:dhwrecirculationmodel
-        themodelTemp=circuitmodel
-        console.log("model's been updated.")
+        // themodelTemp=circuitmodel
+
+        if(isDaily===true){
+            readmodelForDaily(_device,_date)
+            themodelTemp=circuitmodel
+        }
+
+        else if(isDaily===false){
+            readmodelForList(_device)
+            themodelTemp=listschedulemodel
+        }
+        console.log("model's been updated.")       
+
         return themodelTemp
     }
 
-    function circuitModelRead(){
-        // var resultData = appModel.ddc_getSchedules()// _date에 따라서 데이터 불러오기
+    function readmodelForList(){
+        //ddc_getSchedules함수에 "날짜 정보 없이" 장치 정보 보내서 데이터 읽어오기
+        // var resultData = appModel.ddc_getSchedules(_device)
+        //현재는 readmodelForDaily()와 동일한 데이터로 작업 -> 나중에 삭제 해야함
+        var resultData=[//_read날짜 읽어와서 result date에 append
+                    {
+                       "isUse": true,
+                       "isSpecial": true,
+                       "id": "test1",
+                       "name":"My Schedule 1",
+                       "time": "8:00 AM",
+                       "runmode":"on",
+                       "temp":"",
+                       "startDate":"05/10/24",//month,date,year
+                       "endDate":"05/20/24",//month,date,year
+                       "days": [true,true,false,true,true,false,true],
+                       "weeklySchedules": ["1", "2", "3"],
+                       "isPeriod":true,
+                       "isEveryWeek":false
+                    },
+                    {
+                       "isUse": true,
+                       "isSpecial": true,
+                       "id": "test2",
+                       "name":"My Schedule 2",
+                       "time": "10:12 AM",
+                       "runmode":"heat",
+                       "temp":"28.5",
+                       "startDate":"05/10/24",//month,date,year
+                       "endDate":"05/18/24",//month,date,year
+                       "days": [true,false,false,false,false,false,true],
+                       "weeklySchedules": ["1", "2", "3"],
+                       "isPeriod":false,
+                       "isEveryWeek":true
+                    },
+                    {
+                       "isUse": true,
+                       "isSpecial": true,
+                       "id": "test3",
+                       "name":"My Schedule 3",
+                       "time": "10:47 AM",
+                       "runmode":"cool",
+                       "temp":"18",
+                       "startDate":"05/10/24",//month,date,year
+                       "endDate":"05/18/24",//month,date,year
+                       "days": [false,false,false,false,false,true,true],
+                       "weeklySchedules": ["1", "2", "3"],
+                       "isPeriod":true,
+                       "isEveryWeek":false
+                    },
+                    {
+                       "isUse": true,
+                       "isSpecial": true,
+                       "id": "test4",
+                       "name":"My Schedule 4",
+                       "time": "11:00 AM",
+                       "runmode":"cool",
+                       "temp":"17",
+                       "startDate":"05/10/24",//month,date,year
+                       "endDate":"05/19/24",//month,date,year
+                       "days": [true,true,true,true,true,false,false],
+                       "weeklySchedules": ["1", "2", "3"],
+                       "isPeriod":true,
+                       "isEveryWeek":false
+                    },
+                    {
+                       "isUse": true,
+                       "isSpecial": true,
+                       "id": "test5",
+                       "name":"My Schedule 5",
+                       "time": "11:43 PM",
+                       "runmode":"auto",
+                       "temp":"5",
+                       "startDate":"05/10/24",//month,date,year
+                       "endDate":"05/30/24",//month,date,year
+                       "days": [true,true,false,false,true,false,false],
+                       "weeklySchedules": ["1", "2", "3"],
+                       "isPeriod":true,
+                       "isEveryWeek":false
+                    },
+                    {
+                       "isUse": true,
+                       "isSpecial": true,
+                       "id": "test6",
+                       "name":"My Schedule 6",
+                       "time": "10:40 PM",
+                       "runmode":"cool",
+                       "temp":"18",
+                       "startDate":"06/10/24",//month,date,year
+                       "endDate":"06/30/24",//month,date,year
+                       "days": [true,true,true,true,true,true,true],
+                       "weeklySchedules": ["1", "2", "3"],
+                       "isPeriod":false,
+                       "isEveryWeek":true
+                    },
+                    {
+                        "isUse": true,
+                        "isSpecial": true,
+                        "id": "test7",
+                        "name":"My Schedule 7",
+                        "time": "11:43 PM",
+                        "runmode":"auto",
+                        "temp":"5",
+                        "startDate":"07/07/24",//month,date,year
+                        "endDate":"07/21/24",//month,date,year
+                        "days": [true,false,false,false,false,false,true],
+                        "weeklySchedules": ["1", "2", "3"],
+                        "isPeriod":true,
+                        "isEveryWeek":false
+                     }
+                ]
+        listschedulemodel.clear()
+
+        var hourTemp
+        var minTemp
+        var ampmTemp
+        var repeatTextTemp
+
+        for(var item=0;item<resultData.length;item++){
+            hourTemp=resultData[item]["time"].split(" ")[0].split(":")[0]
+            minTemp=resultData[item]["time"].split(" ")[0].split(":")[1]
+            ampmTemp=resultData[item]["time"].split(" ")[1]
+
+            repeatTextTemp=getRepeatText(resultData[item]["days"])
+
+            listschedulemodel.append({hour:hourTemp
+                                ,min:minTemp
+                                ,ampm:ampmTemp
+                                ,isUse:resultData[item]["isUse"]
+                                ,name:resultData[item]["name"]
+                                ,id:resultData[item]["id"]
+                                ,temp:resultData[item]["temp"]
+                                ,days:repeatTextTemp
+                                ,isEveryWeek:resultData[item]["isEveryWeek"]
+                                ,isPeriod:resultData[item]["isPeriod"]
+                                ,startDate:resultData[item]["startDate"]
+                                ,endDate:resultData[item]["endDate"]
+                                ,runningMode:resultData[item]["runmode"]
+                                })
+        }
+    }
+
+    function readmodelForDaily(_device,_date){
+        // var resultData = appModel.ddc_getSchedules(_device,_date)// _date에 따라서 데이터 불러오기
         var resultData=[//_read날짜 읽어와서 result date에 append
                     {
                        "isUse": true,
@@ -664,11 +849,14 @@ Item {
                 runningModelist=[];
                 templist=[];
                 dayslist=[];
+                endlist=[];
+                startlist=[];
                 idlist=[];
                 namelist=[];
+                periodlist=[];
+                everyweeklist=[];
             }
         }
-
 
         for(var i in detailtemp){
             circuitmodel.append({time:detailtemp[i]["time"][0],detail:[]})
@@ -742,7 +930,7 @@ Item {
     }
 
     Component.onCompleted: {
-        circuitModelRead()
+        // circuitModelRead()
         var silentTextTemp=silentRead()
         mainmodel.get(4).subText=silentTextTemp
         homeListmodel=mainmodel

@@ -158,14 +158,8 @@ Textmold {
 
     //Initialize view data.         //code by pms
     Component.onCompleted: {
-        var varData = { "currentTemp": 21.5,
-                        "resolvedTemp": 20.0 }
-
-        //실제 코드 : 현재 사용 못함.
-//         varData = appModel.GetCircuitTemp(runmode);
-
-        currentTemp = varData["currentTemp"];
-        setTemp = varData["resolvedTemp"];
+        currentTemp = appModel.getCircuitTemp()
+        setTemp = appModel.getSetTemp()
 
         naturalTempText = setTemp.toString().split(".")[0]
         pointTempText = setTemp.toString().split(".")[1] || '0'

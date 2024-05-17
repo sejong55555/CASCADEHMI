@@ -11,6 +11,10 @@ Rectangle{
     color:"#FFFFFF"
 
     property bool isCoolingPopup: true
+    property real coolTemp:10
+    property real heatTemp:32
+    property bool isCelsius:true
+    property string unitTempSuffix:""
 
     signal sigReadWaterTemp()
 
@@ -78,28 +82,20 @@ Rectangle{
         scrollviewmodel:popupmodel
         onSigClickDelegate: {
             if(isCoolingPopup===true){
-                //*to do delgate 클릭시 inf로 냉,난방 물온도 설정 값 보내야함
                 coolTemp=Number(sendData)+Variables.coolingWatermin
+                appModel.setCoolWaterTemperature(coolTemp.toString())
+                listmodel.get(0).subText = coolTemp.toString()
             }
             else if(isCoolingPopup===false){
                 heatTemp=Number(sendData)+Variables.heatingWatermin
+                appModel.setHotWaterTemperature(heatTemp.toString())
+                listmodel.get(1).subText = heatTemp.toString()
             }
             sigReadWaterTemp()
         }
     }
 
-    property real coolTemp:10
-    property real heatTemp:32
-    property bool isCelsius:true
-    property string unitTempSuffix:""
-
-
     onSigReadWaterTemp:{
-
-        //todo 설정된 냉,난방 온도 읽어와서 보여줘야함
-        // coolTemp=10
-        // heatTemp=32
-        // isCelsius=true
         if(isCelsius){
             unitTempSuffix="°C"
         }
@@ -107,8 +103,11 @@ Rectangle{
             unitTempSuffix="°F"
         }
 
-        listmodel.get(0).subText=coolTemp.toString()
-        listmodel.get(1).subText=heatTemp.toString()
+        listmodel.get(0).subText=appModel.getCoolWaterTemperature()
+        listmodel.get(1).subText=appModel.getHotWaterTemperature()
+
+        coolTemp = parseFloat(appModel.getCoolWaterTemperature())
+        heatTemp = parseFloat(appModel.getHotWaterTemperature())
     }
 
     Component.onCompleted: {

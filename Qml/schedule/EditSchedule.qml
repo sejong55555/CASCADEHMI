@@ -73,20 +73,13 @@ Rectangle{
                 sigDeleteClickEditSchedule(scheduleID)
             }
             onSigRowRClick: {
-                //activation 상태를 설정 함수에 바로 보내므로 불필요 코드
-//                if(activationToggleFlag===true){
-//                    sigDoneClickEditSchedule(hourText,minText,trdText,fthText)
-//                }
-//                else if(activationToggleFlag===false){
-//                    sigDoneClickEditSchedule("","","","")
-//                }
 
                 var scheduleData = {
                    "isUse": activationToggleFlag,
                    "id": idString,
                    "name": nameString,
                    "time": timeText,
-                   "day": [ dayOfWeek["mon"] ? "MON" : ""
+                   "days": [ dayOfWeek["mon"] ? "MON" : ""
                             , dayOfWeek["tue"] ? "TUE" : ""
                             , dayOfWeek["wen"] ? "WEN" : ""
                             , dayOfWeek["the"] ? "THE" : ""
@@ -378,6 +371,13 @@ Rectangle{
         hourText=_hour
         minText=_min
         ampmText=_ampm
+        var ampmindex
+        if(_ampm==="AM"){
+            ampmindex=0
+        }
+        else{
+            ampmindex=1
+        }
         // sndText="Everyday" //to do ... have to Db days read
         sndText=_days
 
@@ -403,7 +403,7 @@ Rectangle{
         }
         fthText=_temp
 
-        timePicker.sigSetDefaultIndex(_hour,_min,0)//third index AM fixed
+        timePicker.sigSetDefaultIndex(_hour,_min,ampmindex)//third index AM fixed
         operatingOption.sigSetDefaultData(trdText,fthText)
         operatingOption.initeditOperationSetting()
         //operating 에 Text data전송
@@ -421,14 +421,25 @@ Rectangle{
     function repeatTextTolist(_repeatText){
         var daylist=["sun","mon","tue","wed","thu","fri","sat"]
         var repeatDaylist=[]
-        var datelistTemp=[]
-        repeatDaylist=_repeatText.split(" ")
-        for(var item in daylist){
-            datelistTemp[item]=false
-            var idx=daylist.indexOf(repeatDaylist[item])
-            datelistTemp[idx]=true
+        var datelistTemp=[false,false,false,false,false,false,false]
+        repeatDaylist=_repeatText.split(" ").slice(0,-1)
+
+        if(_repeatText==="Weekend"){
+            datelistTemp=[true,false,false,false,false,false,true]
         }
-        console.log(datelistTemp.length)
+        else if(_repeatText==="WeekDay"){
+            datelistTemp=[false,true,true,true,true,true,false]
+        }
+        else if(_repeatText==="EveryDay"){
+            datelistTemp=[true,true,true,true,true,true,true]
+        }
+        else{
+            for(var item=0;item<daylist.length;item++){
+                var idx=daylist.indexOf(repeatDaylist[item])
+                datelistTemp[idx]=true
+            }
+        }
+
         return datelistTemp
     }
 

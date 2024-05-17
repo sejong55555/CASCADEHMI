@@ -12,6 +12,9 @@ Rectangle{
 
     signal sigReadFlagSetting()
 
+    property bool silentFlag
+    property bool boilerFlag
+
     Column{
         width:Variables.sourceWidth
         height:Variables.sourceHeight
@@ -40,36 +43,41 @@ Rectangle{
                         }
                     }
                     Component.onCompleted: {
-                        sigReadFlagSetting()
                         switch(index){
                         case 1 : {
-                            console.log(silentFlag)
+                            if(appModel.getSilentMode() ==="true")
+                                silentFlag =true
+                            else
+                                silentFlag =false
                             titleToggleInit(silentFlag);
-
                             break;}
                         case 2 : {
-                            console.log(boilerFlag)
+                            if(appModel.getThirdPartyBoilerMode() ==="true")
+                                boilerFlag =true
+                            else
+                                boilerFlag =false
                             titleToggleInit(boilerFlag);
                             break;}
                        }
                     }
                     onSigtoggleOn: {
-                        //inf에 setting 변경 신호 보내기
-                        if(index===0){
-                            //silent
-                            silentFlag=true //flag는 inf에서 읽어와서 사용할 것이라서 나중에 지우기
+                        if(index===1){
+                            silentFlag=true
+                            appModel.setSilentMode("true")
                         }
-                        else if(index===1){
-                            boilerFlag=true
-                            //boiler
+                        else if(index===2){
+                            boilerFlag=true                            
+                            appModel.setThirdPartyBoilerMode("true")
                         }
                     }
                     onSigtoggleOff: {
-                        if(index===0){
+                        if(index===1){
                             silentFlag=false
+                            appModel.setSilentMode("false")
                         }
-                        else if(index===1){
-                            boilerFlag=true
+                        else if(index===2){
+                            boilerFlag=false
+                            appModel.setThirdPartyBoilerMode("false")
                         }
                     }
             }
@@ -78,10 +86,7 @@ Rectangle{
     WaterTempSetting{
         id:waterTempSetting
         visible:false
-    }
-
-    property bool silentFlag
-    property bool boilerFlag
+    }    
 
     ListModel{
         id:listmodel
@@ -91,11 +96,8 @@ Rectangle{
     }
 
     onSigReadFlagSetting: {
-        //setting 값 불러와서 설정
-        silentFlag=true
-        boilerFlag=false
     }
+
     Component.onCompleted: {
-        sigReadFlagSetting()
     }
 }

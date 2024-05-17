@@ -29,14 +29,14 @@ Rectangle {
 
     Component.onCompleted: {
         // sigReadusage("400","1000")
-        var data = {"curUsage": "210",
-                    "totUsage": "1542"}
+        // var data = {"curUsage": "210",
+        //             "totUsage": "1542"}
 
         //실제 요청 : 현재 사용 못함.
         //         data= appModel.GetEnergy();
 
-        currentusage = data["curUsage"];
-        totalusage = data["totUsage"];
+        currentusage = appModel.getCurrentEnergy()
+        totalusage = appModel.getTotalEnergy()
     }
 
     Column{
@@ -46,7 +46,7 @@ Rectangle {
             id:title
             z:graphcontent.z+1
             state:"B"
-            left_1st_Text:"Energy"
+            left_1st_Text:qsTr("Energy")
             onSigLClickTitleBar: {
                 Variables.content="Home"
             }
@@ -210,6 +210,7 @@ Rectangle {
                     usageGraph.visible=true
                 }
                 onSigRowRClickIn: {
+                    summary.summaryRead()
                     summary.visible=true
                 }
             }
@@ -241,6 +242,27 @@ Rectangle {
         visible:false
         onSigBackClickSummay: {
             visible=false
+
         }
     }
+
+    Monthmodel{
+        id:monthmodel
+    }
+
+    // ListModel{
+    //     id:monthmodel
+    //     ListElement{index:"January"}
+    //     ListElement{index:"February"}
+    //     ListElement{index:"March"}
+    //     ListElement{index:"April"}
+    //     ListElement{index:"May"}
+    //     ListElement{index:"June"}
+    //     ListElement{index:"July"}
+    //     ListElement{index:"August"}
+    //     ListElement{index:"September"}
+    //     ListElement{index:"October"}
+    //     ListElement{index:"November"}
+    //     ListElement{index:"December"}
+    // }
 }

@@ -8,10 +8,10 @@ Rectangle {
     height:Variables.sourceHeight
     color:"#FFFFFF"
 
-    property string opertitleText: "Circuit"
+    property string opertitleText: qsTr("Circuit")
     property bool circuitToggleFlag: true
 
-    property string setfstText:"Cool"
+    property string setfstText:qsTr("Cool")
     property string setsndText:"18"
     property string suffix
 
@@ -27,7 +27,7 @@ Rectangle {
             anchors.fill:parent
             TitleBar{
                 id:titleBar
-                left_1st_Text:"Operation Settings"
+                left_1st_Text:qsTr("Operation Settings")
                 onSigLClickTitleBar: {
                     if(circuitToggleFlag===true){
                         if(themodel===hotwatermodel){
@@ -126,22 +126,22 @@ Rectangle {
         visible:false
 //        scrollviewmodel:runningmodel
         delegateTextBoxH:21
-        headerText:"running mode"
+        headerText:qsTr("running mode")
         onSigClickDelegate: {
             setfstText=scrollviewmodel.get(sendData).listName
 
-            if(setfstText==="Cool"){
+            if(setfstText===qsTr("Cool")){
                 tempscroll.scrollviewmodel=coolmodel
                 setsndText=tempscroll.scrollviewmodel.get(0).listName
                 themodel.get(1).Textopacity=1
                 console.log(setsndText)
             }
-            else if(setfstText==="Heat"){
+            else if(setfstText===qsTr("Heat")){
                 tempscroll.scrollviewmodel=heatmodel
                 setsndText=tempscroll.scrollviewmodel.get(0).listName
                 themodel.get(1).Textopacity=1
             }
-            else if(setfstText==="Auto"){
+            else if(setfstText===qsTr("Auto")){
                 tempscroll.scrollviewmodel=emptymodel
                 themodel.get(1).Textopacity=0.3
             }
@@ -152,9 +152,9 @@ Rectangle {
     PopupList{
         id:tempscroll
         visible:false
-        headerText:"Setting Temp"
+        headerText:qsTr("Setting Temp")
         suffix: setsndText===""?"":" ̊"
-        scrollviewmodel:setfstText==="Cool"?coolmodel:setfstText==="Heat"?heatmodel:hotmodel
+        scrollviewmodel:setfstText===qsTr("Cool")?coolmodel:setfstText===qsTr("Heat")?heatmodel:hotmodel
         onSigClickDelegate: {
             setsndText=scrollviewmodel.get(sendData).listName
             visible=false
@@ -164,7 +164,7 @@ Rectangle {
     PopupList{
         id:tempscroll2
         visible:false
-        headerText:"Setting Temp"
+        headerText:qsTr("Setting Temp")
         suffix:" ̊"
         scrollviewmodel:hotmodel
         onSigClickDelegate: {
@@ -175,20 +175,20 @@ Rectangle {
 
     ListModel{
         id:circuitmodel
-        ListElement{listtitle:"Running Mode";Textopacity:1}
-        ListElement{listtitle:"Temperature";Textopacity:1}
+        ListElement{listtitle:qsTr("Running Mode");Textopacity:1}
+        ListElement{listtitle:qsTr("Temperature");Textopacity:1}
     }
 
     ListModel{
         id:hotwatermodel
-        ListElement{listtitle:"Temperature";Textopacity:1}
+        ListElement{listtitle:qsTr("Temperature");Textopacity:1}
     }
 
     ListModel{
         id:runningmodel
-        ListElement{listName:"Cool"}
-        ListElement{listName:"Heat"}
-        ListElement{listName:"Auto"}
+        ListElement{listName:qsTr("Cool")}
+        ListElement{listName:qsTr("Heat")}
+        ListElement{listName:qsTr("Auto")}
     }
 
     ListModel{
@@ -233,7 +233,7 @@ Rectangle {
     }
 
     function initaddOperationSetting(){
-        setfstText="Cool"
+        setfstText=qsTr("Cool")
         setsndText="18"
         circuitToggleFlag=true
         circuitActoption.titleToggleInit(true)

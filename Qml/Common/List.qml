@@ -116,6 +116,7 @@ Rectangle {
                         visible:false
                         y:left_1st_Textfield.height+2 //spacing
                         width:parent.width
+                        textfieldClip:false
                         height:14
                         textfieldWidth:width
                         textfieldHeight:height

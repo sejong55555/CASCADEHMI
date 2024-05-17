@@ -58,10 +58,12 @@ Rectangle {
                     }
                     onSigtoggleOn: {//*to do inf신호 보내고 variable변경 함수 호출+onSigReadScreenSetting
                         autoReturnMainScreen=true//나중엔 읽어와서 사용
+                        appModel.setAutoRetrunMainScreen("true")
                         console.log("ON")
                     }
                     onSigtoggleOff: {
                         autoReturnMainScreen=false//나중엔 읽어와서 사용
+                        appModel.setAutoRetrunMainScreen("false")
                         console.log("OFF")
                     }
                 }
@@ -107,6 +109,9 @@ Rectangle {
         else if(!autoReturnMainScreen){
             listmodel.get(2).Imagename="off"
         }
+        appModel.setScreenSaveTime(listmodel.get(0).subText)
+        appModel.setLCDBacklightIdle(listmodel.get(1).subText)
+
     }
 
     ListModel{

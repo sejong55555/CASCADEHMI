@@ -10,6 +10,35 @@ Rectangle {
     signal sigHomeClick()
     signal sigInmonitoringClick()
 
+    function updateValue()
+    {
+        var resultData = appModel.getMonitorOutData();
+
+        //console.log("resultData.length ="+resultData.length)
+        for(var i=0;i<resultData.length;i++){
+            console.log("##  index ="+i +" , count ="+resultData[i]["count"]+" ,listTitle ="+resultData[i]["listTitle"]
+                        +" ,listInlet ="+resultData[i]["listInlet"]
+                        +" ,listOutlet ="+resultData[i]["listOutlet"]
+                        +" ,listFlowrate ="+resultData[i]["listFlowrate"]
+                        +" ,listWaterpress ="+resultData[i]["listWaterpress"])
+
+            nModelCount =resultData[0]["count"]
+
+            for(var j=0;j<nModelCount;j++){
+                //console.log("listTitle j ="+ j+" value = " + resultData[i]["listTitle"][j])
+                listTitle[j] = resultData[i]["listTitle"][j]
+                listInlet[j] = resultData[i]["listInlet"][j]
+                listOutlet[j] = resultData[i]["listOutlet"][j]
+                listFlowrate[j] = resultData[i]["listFlowrate"][j]
+                listWP[j] = resultData[i]["listWaterpress"][j]
+            }
+            console.log("listTitle ="+listTitle)
+        }
+
+        monitoringModelRead()
+
+    }
+
     Image{
         id:backgroundimg
         anchors.fill:parent
@@ -223,63 +252,26 @@ Rectangle {
             // console.log("Title[" + item + "] : " + deviceListData[item]);
             // console.log("size[" + item + "] : " + sizelist[item]);
             themodel.append({devicename:listTitle[item],size:sizelist[item],
-                            info:[{iconimagename:"monitoring_inlet_",temp:listInlet[item].toString()}
-                                ,{iconimagename:"monitoring_outlet_",temp:listOutlet[item].toString()}
-                                ,{iconimagename:"monitoring_flowrate_",temp:listFlowrate[item].toString()}
-                                ,{iconimagename:"monitoring_waterpressure_",temp:listWP[item].toString()}]});
+                            info:[{iconimagename:"monitoring_inlet_",temp:listInlet[item]}
+                                ,{iconimagename:"monitoring_outlet_",temp:listOutlet[item]}
+                                ,{iconimagename:"monitoring_flowrate_",temp:listFlowrate[item]}
+                                ,{iconimagename:"monitoring_waterpressure_",temp:listWP[item]}]});
 
         }
         devicelistLayout.modelset=themodel
     }
 
     property int nModelCount : 0;
-        property variant listTitle: [""];
-        property variant listInlet: [0];
-        property variant listOutlet: [0];
-        property variant listFlowrate: [0];
-        property variant listWP: [0];
+    property var listTitle: [];
+    property var listInlet: [];
+    property var listOutlet: [];
+    property var listFlowrate: [];
+    property var listWP: [];
 
         //Initialize view data      //code by pms
-    Component.onCompleted: {
-        var varData = { "count"             : 4,
-                        "listTitle"         : ["heater", "DWH", "heater", "DWH"],
-                        "listInlet"         : [10, 20, 30, 40],
-                        "listOutlet"        : [10, 20, 30, 40],
-                        "listFlowrate"      : [10, 20, 30, 40],
-                        "listWaterpress"    : [10, 20, 30, 40]
-        }
+    Component.onCompleted: {        
 
-        //인터페이스 연결 코드 - 현재 사용 못함.
-//        varData = appModel.GetMonitorOutData();
-
-        nModelCount = varData["count"];
-        listTitle = varData["listTitle"];
-        listInlet = varData["listInlet"];
-        listOutlet = varData["listOutlet"];
-        listFlowrate = varData["listFlowrate"];
-        listWP = varData["listWaterpress"];
-
-////Debug code - delete after.
-//        for(var itemTitle in varData["listTitle"])
-//            console.log("Title[" + itemTitle + "] : " + listTitle[itemTitle]);
-//        for(var itemInlet in varData["listInlet"])
-//            console.log("Inlet[" + itemInlet + "] : " + listInlet[itemInlet]);
-//        for(var itemOutlet in varData["listOutlet"])
-//            console.log("Outlet[" + itemOutlet + "] : " + listOutlet[itemOutlet]);
-//        for(var itemFR in varData["listFlowrate"])
-//            console.log("Title[" + itemFR + "] : " + listFlowrate[itemFR]);
-//        for(var itemWP in varData["listWaterpress"])
-//            console.log("WaterPressure[" + itemFR + "] : " + listWP[itemWP]);
-
-        monitoringModelRead()
     }
 
 
-
-    // Component.onCompleted: {
-
-    //     // initModel()
-    //     monitoringModelRead()
-
-    // }
 }

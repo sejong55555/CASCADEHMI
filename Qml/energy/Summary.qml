@@ -1,5 +1,6 @@
 import QtQuick 2.7
 import QtQml 2.0
+
 import "../Global"
 import "../Common"
 
@@ -8,14 +9,53 @@ Rectangle {
     width:Variables.sourceWidth;height:Variables.sourceHeight
     color:"#FFFFFF"
 
-    property var colName :["","Heat","Cool","DHW","Total"]
-    property var rowName :["Today","Month","Year"]
+    property var colName :["",qsTr("Heat"),qsTr("Cool"),qsTr("DHW"),qsTr("Total")]
+    property var rowName :[qsTr("Today"),qsTr("Month"),qsTr("Year")]
 
-    property var listToday:[12,13,14,15]
-    property var listMonth:[93,153,142,135]
-    property var listYear:[42,63,74,65]
+    property var summaryToday
+    property var summaryMonth
+    property var summaryYear
+
+    property bool isPower: true
 
     signal sigBackClickSummay()
+
+    function summaryRead(){
+        summaryToday=[]
+        summaryMonth=[]
+        summaryYear=[]
+
+        var resultData
+
+        // var resultData = appModel.getSummaryPowerData();
+        // var resultData = appModel.getSummaryCalData();
+
+        if(isPower===true){
+            resultData={
+                "summaryToday":[12,13,14,39]
+                ,"summaryMonth":[93,153,142,388]
+                ,"summaryYear":[42,63,74,179]
+            }
+            summaryToday=resultData["summaryToday"]
+            summaryMonth=resultData["summaryMonth"]
+            summaryYear=resultData["summaryYear"]
+        }
+
+        else if(isPower===false){
+            resultData={
+                "summaryToday":[100,100,100,300]
+                ,"summaryMonth":[293,253,242,788]
+                ,"summaryYear":[342,363,374,1079]
+            }
+
+            summaryToday=resultData["summaryToday"]
+            summaryMonth=resultData["summaryMonth"]
+            summaryYear=resultData["summaryYear"]
+
+        }
+
+
+    }
 
     Column{
         width:Variables.sourceWidtt;height:Variables.sourceHeight
@@ -27,6 +67,12 @@ Rectangle {
             onSigLClickTitleBar:{
                 sigBackClickSummay()
             }
+
+            onSigRClickTitleBar: {
+                isPower=!isPower
+                summaryRead()
+            }
+
         }
 
         Row{
@@ -103,26 +149,79 @@ Rectangle {
         }
     }
 
-    // Column{
-    //     width:Variables.sourceWidtt;height:Variables.sourceHeight
-    //     spacing:12
+    Column{
+        id:datamold
+        leftPadding:112
+        topPadding:117
+        spacing:25
+        Row{
+            id:todayRow
+            spacing:9
+            Repeater{
+                model:summaryToday
+                Text{
+                    width:79
+                    height:16
+                    verticalAlignment: Text.AlignVCenter
+                    horizontalAlignment: Text.AlignHCenter
+                    text:modelData
+                    color:"#222222"
+                }
+            }
+        }
 
-    //     TitleBar{
-    //         id:title
-    //         left_1st_Text:qsTr("Summary")
-    //         state:"G"
-    //         onSigLClick:{
-    //             sigBackClickUsage()
-    //         }
-    //     }
+        Row{
+            id:monthRow
+            spacing:9
+            Repeater{
+                model:summaryMonth
+                Text{
+                    width:79
+                    height:16
+                    verticalAlignment: Text.AlignVCenter
+                    horizontalAlignment: Text.AlignHCenter
+                    text:modelData
+                    color:"#222222"
+                }
+            }
+        }
 
-    //     Rectangle{
-    //         id:tablebg
-    //         x:20;
-    //         width:439;height:164
-    //         color:"#DEE1E5"
+        Row{
+            id:yearRow
+            spacing:9
+            Repeater{
+                model:summaryYear
+                Text{
+                    width:79
+                    height:16
+                    verticalAlignment: Text.AlignVCenter
+                    horizontalAlignment: Text.AlignHCenter
+                    text:modelData
+                    color:"#222222"
+                }
+            }
+        }
 
-    //     }
-    // }
+    }
+
+    Text{
+        id:unitBox
+        width:80
+        height:14
+        x:380
+        y:240
+        font.pixelSize: 14
+        horizontalAlignment: Text.AlignRight
+        verticalAlignment: Text.AlignVCenter
+        color:"#222222"
+        text:isPower===true? "*Unit : kWh" : "*Unit : Hours"
+    }
+
+
+
+    Component.onCompleted: {
+        summaryRead()
+    }
+
 }
 

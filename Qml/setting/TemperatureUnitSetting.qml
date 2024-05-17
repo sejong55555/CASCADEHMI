@@ -85,6 +85,7 @@ Rectangle {
             else if(sendData==1){
                 isCelsius=false
             }
+            isCelsius ? appModel.setTemperatureUnit("true"):appModel.setTemperatureUnit("false")
             unitTempText = scrollviewmodel.get(sendData).listName//나중에 삭제
             sigReadTempSetting()
         }

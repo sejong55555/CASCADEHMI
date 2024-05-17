@@ -47,7 +47,6 @@ Rectangle{
     signal sigrightItemClickDaily()
     signal sigbackClickDaily()
     signal sigeditClickDaily()
-    signal sigeditmodel(string _editHour,string _editMin)
 
     Column{
         id: columnLayout
@@ -112,6 +111,7 @@ Rectangle{
                             tempDate.setDate(tempDate.getDate() + 1)
                             currentDate = tempDate
                             dateString = currentDate.toLocaleDateString(locale,"ddd, MMM dd, yyyy"); //data참조해서 db에서 scheduler가져와야함 ~
+                            //modelread() data 정보 보내기 edit set 까지
                         }
                     }
                 }
@@ -208,50 +208,50 @@ Rectangle{
             cacheBuffer :1
             snapMode :ListView.SnapOneItem
             orientation: ListView.Horizontal
-                model: _detailModel
-                delegate: Item{
-                    id:delegate
-                    width:480;height:107
-                    property string daysText
-                    property string split
-                    IconTextButton{
-                        id:iconTextBox
-                        y:7
-                        btnORicon:runningMode==="off"||runningMode==="on"?"btn_":"ic_"
-                        imagestate:runningMode==="off"||runningMode==="on"?"_n":""
-                        width:iconWidth+textIcondistance+textBoxWidth;height:iconHeight
-                        leftSpacing:183
-                        iconWidth:24;iconHeight:iconWidth
-                        textBoxWidth:37;textBoxHeight:18;fontsize:18
-                        textIcondistance:4
-                        horizontalAlignment:Text.AlignHCenter
-                        iconImageName:"schedule_"+runningMode
-                        textLabel:qsTr(runningMode.charAt(0).toUpperCase()+runningMode.slice(1));
-                    }
-                    Text{
-                        width:44;height:21
-                        x:252;y:9
-                        font.pixelSize: 18
-                        color:"#222222"
-                        text:temp===""?"":temp+"°"
-                    }
-                    Text{
-                        id:dateBox
-                        width:250;height:14
-                        font.pixelSize:14
-                        x:115;y:35
-                        verticalAlignment: Text.AlignVCenter
-                        horizontalAlignment: Text.AlignHCenter
-                        text:hour+":"+min +" "+ampm+split+daysText
-                    }
-                    Component.onCompleted: {
-                    // days list 추가 한 후에 read
-                        // daysText=getRepeatText(days)
-                        daysText=days
-                        if(daysText!=""){split=", "}
-                        else{split=""}
-                    }
+            model: _detailModel
+            delegate: Item{
+                id:delegate
+                width:480;height:107
+                property string daysText
+                property string split
+                IconTextButton{
+                    id:iconTextBox
+                    y:7
+                    btnORicon:runningMode==="off"||runningMode==="on"?"btn_":"ic_"
+                    imagestate:runningMode==="off"||runningMode==="on"?"_n":""
+                    width:iconWidth+textIcondistance+textBoxWidth;height:iconHeight
+                    leftSpacing:183
+                    iconWidth:24;iconHeight:iconWidth
+                    textBoxWidth:37;textBoxHeight:18;fontsize:18
+                    textIcondistance:4
+                    horizontalAlignment:Text.AlignHCenter
+                    iconImageName:"schedule_"+runningMode
+                    textLabel:qsTr(runningMode.charAt(0).toUpperCase()+runningMode.slice(1));
                 }
+                Text{
+                    width:44;height:21
+                    x:252;y:9
+                    font.pixelSize: 18
+                    color:"#222222"
+                    text:temp===""?"":temp+"°"
+                }
+                Text{
+                    id:dateBox
+                    width:250;height:14
+                    font.pixelSize:14
+                    x:115;y:35
+                    verticalAlignment: Text.AlignVCenter
+                    horizontalAlignment: Text.AlignHCenter
+                    text:hour+":"+min +" "+ampm+split+daysText
+                }
+                Component.onCompleted: {
+                // days list 추가 한 후에 read
+                    // daysText=getRepeatText(days)
+                    daysText=days
+                    if(daysText!=""){split=", "}
+                    else{split=""}
+                }
+            }
             // }
             onCurrentIndexChanged: {
                 _hour = _detailModel.get(currentIndex).hour

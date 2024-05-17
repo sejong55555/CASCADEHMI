@@ -93,5 +93,7 @@
         <file>Qml/setting/RemoteWifiParing.qml</file>
         <file>Qml/setting/Reboot.qml</file>
         <file>Qml/setting/InstallerSettingHome.qml</file>
+        <file>Qml/notification/NotificationHome.qml</file>
+        <file>Qml/Common/Ampmmodel.qml</file>
     </qresource>
 </RCC>

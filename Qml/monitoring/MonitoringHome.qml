@@ -2,6 +2,7 @@ import QtQuick 2.7
 import QtQml 2.0
 import "../Global"
 import "../Common"
+import "../notification"
 import "../menu"
 
 Item {
@@ -26,9 +27,13 @@ Item {
             monitoringIn.visible=false
             monitoringOut.visible=true
         }
+
+        onVisibleChanged: {
+            updateValue()
+        }
     }
 
-    MonitoringOut{
+    MonitoringOut{//osea
         id:monitoringOut
         visible:false
 
@@ -44,7 +49,9 @@ Item {
             monitoringIn.visible=true
         }
 
-
+        onVisibleChanged: {
+            updateValue()
+        }
     }
 
     HomeCircuit{
@@ -78,6 +85,7 @@ Item {
         onSigSendRunmode:{
             runningMode.visible = false
             homeCircuit.runmodestring=sendrunmode
+            appModel.setRunMode(homeCircuit.runmodestring)
         }
     }
 
@@ -86,6 +94,8 @@ Item {
         visible:false
         onSigAlarmClick: {
             menu.visible=false
+            notificationhome.notiRead()
+            notificationhome.visible=true
         }
         onSigCloseClick: {
             menu.visible=false
@@ -102,6 +112,18 @@ Item {
         onSigSettingClick: {
             Variables.content="Setting"
         }
+        alarmBtnImageState:notificationhome.newAlarmCount===0? "n" : ""
+        alarmBtnImageSource: notificationhome.newAlarmCount > 99? Variables.sourcePath+"btn_menu_alarm_new.png":Variables.sourcePath+"btn_menu_alarm_num.png"
+
+        alarmCountVisible:notificationhome.newAlarmCount > 99? false : true
+        alarmImagename:notificationhome.newAlarmCount===0? "menu_alarm" :""
+        alarmCountText:notificationhome.newAlarmCount===0? "" : notificationhome.newAlarmCount
+    }
+
+    NotificationHome{
+        id:notificationhome
+        visible:false
+
     }
 
     DriveMode{

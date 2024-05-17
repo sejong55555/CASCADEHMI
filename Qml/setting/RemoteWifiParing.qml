@@ -58,6 +58,7 @@ Rectangle{
                         //성공 신호 받기 iswifi변경 10초 설정 initDone받고
                         //실패 신호 받기
                         appconnectloading.initStart()
+                        appModel.setWifi_Paring("true")
                     }
                 }
 
@@ -202,8 +203,11 @@ Rectangle{
     }
 
     onSigGetwifiSignal: {
-        isWificonnect=true//wifi 연결 상태를 읽어옴 성공이라고 가정
-        // isWificonnect=false
+        if(appModel.getWifi_Paring()==="true")
+            isWificonnect=true//wifi 연결 상태를 읽어옴 성공이라고 가정
+        else
+            isWificonnect=false
+
         if(isWificonnect){
             success.visible=true
         }

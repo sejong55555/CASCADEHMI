@@ -200,6 +200,54 @@ Rectangle{
     property string minString :currentTimeString.split(" ")[0].split(":")[1]
     property int ampmString:currentTimeString.split(" ")[1]==="AM"?1:0
 
+    function convertDateString(dateString) {
+        var parts = dateString.split(" ");
+        if (parts.length != 3) {
+            return "Invalid date format";
+        }
+
+        var month = parts[0];
+        var day = parts[1].replace(",", "");
+        var year = parts[2];
+
+        // Ensure the month and day are two digits
+        if (month.length === 1) {
+            month = "0" + month;
+        }
+        if (day.length === 1) {
+            day = "0" + day;
+        }
+        return year + "-" + month + "-" + day;
+    }
+
+    function convertTimeString(timeString) {
+        var parts = timeString.split(" ");
+        if (parts.length != 2) {
+            return "Invalid time format";
+        }
+
+        var timePart = parts[0].split(":");
+        var period = parts[1];
+
+        if (timePart.length != 2) {
+            return "Invalid time format";
+        }
+
+        var hours = parseInt(timePart[0]);
+        var minutes = timePart[1];
+
+        if (period === "PM" && hours < 12) {
+            hours += 12;
+        } else if (period === "AM" && hours === 12) {
+            hours = 0;
+        }
+
+        var hoursString = hours < 10 ? "0" + hours : "" + hours;
+        var result = hoursString + ":" + minutes;
+
+        return result;
+    }
+
 
     onSigReadDateSetting: {
         listmodel.get(0).subText = country
@@ -212,6 +260,16 @@ Rectangle{
             listmodel.get(3).subText = timeformatmodel.get(1).listName
         }
 
+        appModel.setTimeZone(listmodel.get(0).subText)
+
+        if(isAmPm){
+            var date = convertDateString(listmodel.get(1).subText)
+            appModel.ddc_setDate(date)
+
+            var time = convertTimeString(listmodel.get(2).subText)
+            appModel.ddc_setTime(time)
+        }
+        //time format, in case 24hours, need to modify a code, osea
     }
 
     Component.onCompleted: {

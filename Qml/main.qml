@@ -28,11 +28,30 @@ Window {
         source: showView()
     }
 
+    ListModel{
+        id:monthmodel
+        ListElement{index:"January"}
+        ListElement{index:"February"}
+        ListElement{index:"March"}
+        ListElement{index:"April"}
+        ListElement{index:"May"}
+        ListElement{index:"June"}
+        ListElement{index:"July"}
+        ListElement{index:"August"}
+        ListElement{index:"September"}
+        ListElement{index:"October"}
+        ListElement{index:"November"}
+        ListElement{index:"December"}
+    }
+
     function showView() { //loader로 하니까 schedule load시 좀 느린 것 같음....
-        var url="setting/SettingHome.qml"
+        var url="notification/Notification.qml"
         // var url="setting/InstallerSettingHome.qml"
         if(Variables.content==="Home"){
             url="monitoring/MonitoringHome.qml";
+        }
+        else if(Variables.content==="Notification"){
+            url="notification/NotificationHome.qml";
         }
 
         else if(Variables.content==="Function"){

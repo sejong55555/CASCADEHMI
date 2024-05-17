@@ -35,6 +35,9 @@ Rectangle {
                 for(var i=0;i<listmodel.count;i++){
                     listmodel.get(i).Imagestate="n"
                 }
+                appModel.setGeneralLock("false")
+                appModel.setModeLock("false")
+                appModel.setDHWLock("false")
 
             }
             onSigtoggleOn:{
@@ -42,6 +45,9 @@ Rectangle {
                 for(var i=0;i<listmodel.count;i++){
                     listmodel.get(i).Imagestate="d"
                 }
+                appModel.setGeneralLock("true")
+                appModel.setModeLock("true")
+                appModel.setDHWLock("true")
             }
         }
         ListView{
@@ -88,14 +94,17 @@ Rectangle {
                         case 0:{
                             onOffLock=true//flag는 inf에서 읽어와서 사용할 것이라서 나중에 지우기
                             console.log("on")
+                            appModel.setGeneralLock("true")
                             break;
                         }
                         case 1:{
                             modeLock=true
+                            appModel.setModeLock("true")
                             break;
                         }
                         case 2:{
                             dhwLock=true
+                            appModel.setDHWLock("true")
                             break;
                         }
                         }
@@ -104,15 +113,18 @@ Rectangle {
                         switch(index){
                         case 0:{
                             console.log("off")
-                            onOffLock=true
+                            onOffLock=false
+                            appModel.setGeneralLock("false")
                             break;
                         }
                         case 1:{
-                            modeLock=true
+                            modeLock=false
+                            appModel.setModeLock("false")
                             break;
                         }
                         case 2:{
-                            dhwLock=true
+                            dhwLock=false
+                            appModel.setDHWLock("false")
                             break;
                         }
                         }
